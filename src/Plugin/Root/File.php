@@ -1,8 +1,8 @@
 <?php
 
-namespace Fernleaf\Wordpress\Plugin;
+namespace Fernleaf\Wordpress\Plugin\Root;
 
-class RootFile {
+class File {
 
 	/**
 	 * @var string
