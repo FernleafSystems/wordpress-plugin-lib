@@ -1,0 +1,18 @@
+{
+  "name": "fernleaf/wordpress",
+  "authors": [
+    {
+      "name": "Paul Goodchild",
+      "email": "paul@icontrolwp.com"
+    }
+  ],
+  "require": {
+  },
+  "require-dev": {
+  },
+  "autoload": {
+    "psr-4": {
+      "Fernleaf\\Wordpress\\"        : "src"
+    }
+  }
+}
