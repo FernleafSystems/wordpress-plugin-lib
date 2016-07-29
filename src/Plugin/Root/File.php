@@ -26,8 +26,8 @@ class File {
 	/**
 	 * @return string
 	 */
-	public function getDir() {
-		return dirname( $this->getFullPath() );
+	public function getRootDir() {
+		return dirname( $this->getFullPath() ).DIRECTORY_SEPARATOR;
 	}
 
 	/**

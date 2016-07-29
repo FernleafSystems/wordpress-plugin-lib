@@ -1,6 +1,6 @@
 <?php
 
-namespace Fernleaf\Wordpress\Plugin;
+namespace Fernleaf\Wordpress\Plugin\Config;
 
 class Specification {
 
