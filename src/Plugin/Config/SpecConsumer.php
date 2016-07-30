@@ -22,7 +22,10 @@ class SpecConsumer {
 				throw new \Exception( 'Cannot construct a SpecConsumer without Specification' );
 			}
 		}
+		$this->init();
 	}
+
+	protected function init() {}
 
 	/**
 	 * @return Specification

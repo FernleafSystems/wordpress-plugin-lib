@@ -4,6 +4,7 @@ namespace Fernleaf\Wordpress\Plugin\Utility;
 
 use Fernleaf\Wordpress\Plugin\Config\SpecConsumer;
 use Fernleaf\Wordpress\Plugin\Config\Specification;
+use Fernleaf\Wordpress\Plugin\Root\File as RootFile;
 
 class Labels extends SpecConsumer {
 
@@ -13,6 +14,11 @@ class Labels extends SpecConsumer {
 	private $oPrefix;
 
 	/**
+	 * @var RootFile
+	 */
+	private $oRootFile;
+
+	/**
 	 * @var array
 	 */
 	protected $aFinalLabels;
@@ -20,12 +26,38 @@ class Labels extends SpecConsumer {
 	/**
 	 * Labels constructor.
 	 *
+	 * @param RootFile $oRootFile
 	 * @param Prefix $oPrefix
 	 * @param Specification $oSpec
 	 */
-	public function __construct( $oPrefix, $oSpec ) {
+	public function __construct( $oRootFile, $oPrefix, $oSpec ) {
 		parent::__construct( $oSpec );
 		$this->oPrefix = $oPrefix;
+		$this->oRootFile = $oRootFile;
+	}
+
+	protected function init() {
+		add_filter( 'all_plugins', array( $this, 'doPluginLabels' ) );
+	}
+
+	/**
+	 * @param array $aPlugins
+	 * @return array
+	 */
+	public function doPluginLabels( $aPlugins ) {
+		$aLabelData = $this->all();
+		if ( empty( $aLabelData ) ) {
+			return $aPlugins;
+		}
+
+		$sPluginFile = $this->oRootFile->getPluginBaseFile();
+		// For this plugin, overwrite any specified settings
+		if ( array_key_exists( $sPluginFile, $aPlugins ) ) {
+			foreach ( $aLabelData as $sLabelKey => $sLabel ) {
+				$aPlugins[ $sPluginFile ][ $sLabelKey ] = $sLabel;
+			}
+		}
+		return $aPlugins;
 	}
 
 	/**
