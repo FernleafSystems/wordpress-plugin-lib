@@ -24,8 +24,6 @@ class Labels extends SpecConsumer {
 	protected $aFinalLabels;
 
 	/**
-	 * Labels constructor.
-	 *
 	 * @param RootFile $oRootFile
 	 * @param Prefix $oPrefix
 	 * @param Specification $oSpec

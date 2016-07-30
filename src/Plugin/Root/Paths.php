@@ -27,16 +27,6 @@ class Paths {
 	}
 
 	/**
-	 * @return string
-	 */
-	public function getPluginBaseFile() {
-		if ( !isset( $this->sPluginBaseFile ) ) {
-			$this->sPluginBaseFile = plugin_basename( $this->oFile->getFullPath() );
-		}
-		return $this->sPluginBaseFile;
-	}
-
-	/**
 	 * @param string $sPath
 	 * @return string
 	 */
@@ -45,5 +35,12 @@ class Paths {
 			$this->sPluginUrl = plugins_url( '/', $this->oFile->getFullPath() );
 		}
 		return $this->sPluginUrl.$sPath;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRootDir() {
+		return $this->oFile->getRootDir(); // todo: duplication
 	}
 }
