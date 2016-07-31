@@ -5,6 +5,7 @@ namespace Fernleaf\Wordpress\Plugin;
 use Fernleaf\Wordpress\Plugin\Config\Reader;
 use Fernleaf\Wordpress\Plugin\Root\File as RootFile;
 use Fernleaf\Wordpress\Plugin\Root\Paths as RootPaths;
+use Pimple\Container;
 
 class Controller {
 
@@ -12,6 +13,11 @@ class Controller {
 	 * @var \Fernleaf\Wordpress\Plugin\Config\Specification
 	 */
 	static private $oSpec;
+
+	/**
+	 * @var \Pimple\Container
+	 */
+	protected $oDic;
 
 	/**
 	 * @var RootFile
@@ -25,6 +31,7 @@ class Controller {
 
 	public function __construct( RootFile $oRootFile ) {
 		$this->oRootFile = $oRootFile;
+		$this->oDic = new Container();
 	}
 
 	/**

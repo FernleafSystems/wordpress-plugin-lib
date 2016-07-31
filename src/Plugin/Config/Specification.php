@@ -148,6 +148,13 @@ class Specification {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getVersion() {
+		return $this->getProperty( 'version' );
+	}
+
+	/**
 	 * @param string $sParentCategory
 	 * @param string $sKey
 	 * @return null|string

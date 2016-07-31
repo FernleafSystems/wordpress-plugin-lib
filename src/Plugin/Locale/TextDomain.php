@@ -3,33 +3,19 @@
 namespace Fernleaf\Wordpress\Plugin\Locale;
 
 use Fernleaf\Wordpress\Plugin\Config\SpecConsumer;
-use Fernleaf\Wordpress\Plugin\Config\Specification;
 use Fernleaf\Wordpress\Plugin\Utility\Paths;
 
 class TextDomain extends SpecConsumer {
 
 	/**
-	 * @var Paths
-	 */
-	protected $oPaths;
-
-	/**
-	 * @param Paths $oPaths
-	 * @param Specification $oSpec
-	 */
-	public function __construct( $oSpec, $oPaths ) {
-		parent::__construct( $oSpec );
-		$this->oPaths = $oPaths;
-	}
-
-	/**
+	 * @param Paths $oPluginPaths
 	 * @return bool
 	 */
-	public function loadTextDomain() {
+	public function loadTextDomain( Paths $oPluginPaths ) {
 		return load_plugin_textdomain(
 			$this->getSpec()->getTextDomain(),
 			false,
-			plugin_basename( $this->oPaths->getPath_Languages() )
+			plugin_basename( $oPluginPaths->getPath_Languages() )
 		);
 	}
 }
