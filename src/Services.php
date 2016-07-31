@@ -4,10 +4,12 @@ namespace Fernleaf\Wordpress;
 
 use Fernleaf\Wordpress\Helpers\Data;
 use Fernleaf\Wordpress\Helpers\IpUtils;
+use Fernleaf\Wordpress\Helpers\Wp\AdminNotices;
 use Fernleaf\Wordpress\Helpers\Wp\Cron;
 use Fernleaf\Wordpress\Helpers\Wp\Db;
 use Fernleaf\Wordpress\Helpers\Wp\Fs;
 use Fernleaf\Wordpress\Helpers\Wp\General;
+use Fernleaf\Wordpress\Helpers\Wp\Track;
 use Fernleaf\Wordpress\Helpers\Wp\Users;
 use Pimple\Container;
 
@@ -30,6 +32,9 @@ class Services {
 		self::$oDic['service_ip'] = function() {
 			return IpUtils::GetInstance();
 		};
+		self::$oDic['service_wp_adminnotices'] = function() {
+			return Cron::GetInstance();
+		};
 		self::$oDic['service_wp_cron'] = function() {
 			return Cron::GetInstance();
 		};
@@ -41,6 +46,9 @@ class Services {
 		};
 		self::$oDic['service_wp_general'] = function() {
 			return General::GetInstance();
+		};
+		self::$oDic['service_wp_track'] = function() {
+			return Users::GetInstance();
 		};
 		self::$oDic['service_wp_users'] = function() {
 			return Users::GetInstance();
@@ -55,7 +63,14 @@ class Services {
 	}
 
 	/**
-	 * @return Db
+	 * @return AdminNotices
+	 */
+	static public function WpAdminNotices() {
+		return self::$oDic[ 'service_wp_adminnotices' ];
+	}
+
+	/**
+	 * @return Cron
 	 */
 	static public function WpCron() {
 		return self::$oDic[ 'service_wp_cron' ];
@@ -83,14 +98,21 @@ class Services {
 	}
 
 	/**
-	 * @return General
+	 * @return Track
+	 */
+	static public function WpTrack() {
+		return self::$oDic[ 'service_wp_track' ];
+	}
+
+	/**
+	 * @return Users
 	 */
 	static public function WpUsers() {
 		return self::$oDic[ 'service_wp_users' ];
 	}
 
 	/**
-	 * @return General
+	 * @return IpUtils
 	 */
 	static public function IP() {
 		return self::$oDic[ 'service_ip' ];
