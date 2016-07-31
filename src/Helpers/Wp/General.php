@@ -125,7 +125,7 @@ class General extends Base {
 				'locale'	=> $this->getLocale( true )
 			);
 			$sQueryUrl = add_query_arg( $aQueryArgs, 'https://api.wordpress.org/core/checksums/1.0/' );
-			$sResponse = $this->loadFileSystemProcessor()->getUrlContent( $sQueryUrl );
+			$sResponse = Services::WpFs()->getUrlContent( $sQueryUrl );
 			if ( !empty( $sResponse ) ) {
 				$aDecodedResponse = json_decode( trim( $sResponse ), true );
 				if ( is_array( $aDecodedResponse ) && isset( $aDecodedResponse['checksums'] ) && is_array( $aDecodedResponse['checksums'] ) ) {
@@ -607,7 +607,7 @@ class General extends Base {
 	 * @return bool
 	 */
 	public function getDoesWpPostSlugExist( $sTermSlug ) {
-		$oDb = $this->loadDbProcessor();
+		$oDb = Services::WpDb();
 		$sQuery = "
 				SELECT ID
 				FROM %s
