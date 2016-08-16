@@ -466,13 +466,6 @@ abstract class Base {
 	}
 
 	/**
-	 * @return boolean
-	 */
-	public function getIfUseSessions() {
-		return $this->getConfigVo()->getProperty( 'use_sessions' );
-	}
-
-	/**
 	 * @param string $sDefinitionKey
 	 * @return mixed|null
 	 */

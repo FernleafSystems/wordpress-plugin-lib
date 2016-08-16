@@ -3,7 +3,8 @@
 namespace Fernleaf\Wordpress\Plugin\Module\Processor;
 
 use Fernleaf\Wordpress\Plugin\Control\Controller;
-use \Fernleaf\Wordpress\Plugin\Module\Handler\Base as ModuleHandlerBase;
+use Fernleaf\Wordpress\Plugin\Module\Handler\Base as ModuleHandlerBase;
+use Fernleaf\Wordpress\Services;
 
 abstract class Base {
 
@@ -61,14 +62,14 @@ abstract class Base {
 	 * @return bool
 	 */
 	protected function getIfDisplayAdminNotice( $aNoticeAttributes ) {
-		$oWpNotices = $this->loadAdminNoticesProcessor();
+		$oWpNotices = Services::WpAdminNotices();
 
 		if ( empty( $aNoticeAttributes['schedule'] ) || !in_array( $aNoticeAttributes['schedule'], array( 'once', 'conditions', 'version' ) ) ) {
 			$aNoticeAttributes[ 'schedule' ] = 'conditions';
 		}
 
 		if ( $aNoticeAttributes[ 'schedule' ] == 'once'
-			&& ( !$this->loadWpUsersProcessor()->getCanAddUpdateCurrentUserMeta() || $oWpNotices->getAdminNoticeIsDismissed( $aNoticeAttributes['id'] ) )
+			&& ( !Services::WpUsers()->getCanAddUpdateCurrentUserMeta() || $oWpNotices->getAdminNoticeIsDismissed( $aNoticeAttributes['id'] ) )
 		) {
 			return false;
 		}
@@ -78,7 +79,7 @@ abstract class Base {
 		}
 
 		if ( isset( $aNoticeAttributes['type'] ) && $aNoticeAttributes['type'] == 'promo' ) {
-			if ( $this->nPromoNoticesCount > 0 || $this->loadWpFunctionsProcessor()->getIsMobile() ) {
+			if ( $this->nPromoNoticesCount > 0 || Services::WpGeneral()->getIsMobile() ) {
 				return false;
 			}
 			$this->nPromoNoticesCount++; // we limit the number of promos displayed at any time to 1
@@ -112,7 +113,7 @@ abstract class Base {
 	protected function insertAdminNotice( $aNoticeData ) {
 		$sRenderedNotice = $this->getFeatureOptions()->renderAdminNotice( $aNoticeData );
 		if ( !empty( $sRenderedNotice ) ) {
-			$this->loadAdminNoticesProcessor()->addAdminNotice(
+			Services::WpAdminNotices()->addAdminNotice(
 				$sRenderedNotice,
 				$aNoticeData['notice_attributes']['notice_id']
 			);
@@ -154,7 +155,7 @@ abstract class Base {
 	 * @return string
 	 */
 	protected function getGoogleRecaptchaLocale() {
-		$aLocaleParts = explode( '_', $this->loadWpFunctionsProcessor()->getLocale(), 2 );
+		$aLocaleParts = explode( '_', Services::WpGeneral()->getLocale(), 2 );
 		return $aLocaleParts[ 0 ];
 	}
 
@@ -221,7 +222,7 @@ abstract class Base {
 	 * @return mixed
 	 */
 	public function getPluginDefaultRecipientAddress() {
-		$oWp = $this->loadWpFunctionsProcessor();
+		$oWp = Services::WpGeneral();
 		return apply_filters( $this->getFeatureOptions()->doPluginPrefix( 'report_email_address' ), $oWp->getSiteAdminEmail() );
 	}
 
@@ -243,14 +244,14 @@ abstract class Base {
 	 * @return bool|int|string
 	 */
 	protected function human_ip() {
-		return $this->loadDataProcessor()->getVisitorIpAddress();
+		return Services::Data()->getVisitorIpAddress();
 	}
 
 	/**
 	 * @return bool|int
 	 */
 	protected function ip() {
-		return $this->loadDataProcessor()->getVisitorIpAddress( false );
+		return Services::Data()->getVisitorIpAddress( false );
 	}
 
 	/**
