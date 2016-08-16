@@ -11,6 +11,7 @@ use Fernleaf\Wordpress\Core\Fs;
 use Fernleaf\Wordpress\Core\General;
 use Fernleaf\Wordpress\Core\Track;
 use Fernleaf\Wordpress\Core\Users;
+use Fernleaf\Wordpress\Utilities\Render;
 use Pimple\Container;
 
 class Services {
@@ -28,6 +29,9 @@ class Services {
 	public function registerAll() {
 		self::$oDic['service_data'] = function() {
 			return Data::GetInstance();
+		};
+		self::$oDic['service_render'] = function() {
+			return new Render();
 		};
 		self::$oDic['service_ip'] = function() {
 			return IpUtils::GetInstance();
@@ -60,6 +64,19 @@ class Services {
 	 */
 	static public function Data() {
 		return self::$oDic[ 'service_data' ];
+	}
+
+	/**
+	 * @param string $sTemplatePath
+	 * @return Render
+	 */
+	static public function Render( $sTemplatePath = '' ) {
+		/** @var Render $oRender */
+		$oRender = self::$oDic[ 'service_render' ];
+		if ( !empty( $sTemplatePath ) ) {
+			$oRender->setTemplateRoot( $sTemplatePath );
+		}
+		return $oRender;
 	}
 
 	/**

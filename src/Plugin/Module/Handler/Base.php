@@ -8,6 +8,7 @@ use Fernleaf\Wordpress\Plugin\Module\Options\Save;
 use Fernleaf\Wordpress\Plugin\Module\Options\Vo as OptionsVo;
 use Fernleaf\Wordpress\Plugin\Module\Configuration\Vo as ConfigVo;
 use Fernleaf\Wordpress\Plugin\Module\Processor\Base as ProcessorBase;
+use Fernleaf\Wordpress\Services;
 
 abstract class Base {
 
@@ -144,7 +145,7 @@ abstract class Base {
 		if ( !empty( $aPhpReqs ) ) {
 
 			if ( !empty( $aPhpReqs['version'] ) ) {
-				$bMeetsReqs = $bMeetsReqs && $this->loadDataProcessor()->getPhpVersionIsAtLeast( $aPhpReqs['version'] );
+				$bMeetsReqs = $bMeetsReqs && Services::Data()->getPhpVersionIsAtLeast( $aPhpReqs['version'] );
 			}
 			if ( !empty( $aPhpReqs['functions'] ) && is_array( $aPhpReqs['functions'] )  ) {
 				foreach( $aPhpReqs['functions'] as $sFunction ) {
@@ -182,7 +183,7 @@ abstract class Base {
 	 */
 	protected function importOptions() {
 		// So we don't poll for the file every page load.
-		if ( $this->loadDataProcessor()->FetchGet( 'icwp_shield_import' ) == 1 ) {
+		if ( Services::Data()->FetchGet( 'icwp_shield_import' ) == 1 ) {
 			$aOptions = $this->getController()->getOptionsImportFromFile();
 			if ( !empty( $aOptions ) && is_array( $aOptions ) && array_key_exists( $this->getOptionsStorageKey(), $aOptions ) ) {
 				$this->getOptionsVo()->setMultipleOptions( $aOptions[ $this->getOptionsStorageKey() ] );
@@ -199,7 +200,7 @@ abstract class Base {
 	 */
 	protected function doExecutePreProcessor() {
 		$oProcessor = $this->getProcessor();
-		return ( is_object( $oProcessor ) && $oProcessor instanceof ICWP_WPSF_Processor_Base );
+		return ( is_object( $oProcessor ) && $oProcessor instanceof ProcessorBase );
 	}
 
 	protected function doExecuteProcessor() {
@@ -286,7 +287,7 @@ abstract class Base {
 	 */
 	public function getFeatureAdminPageUrl() {
 		$sUrl = sprintf( 'admin.php?page=%s', $this->doPluginPrefix( $this->getFeatureSlug() ) );
-		if ( $this->getController()->getIsWpmsNetworkAdminOnly() ) {
+		if ( $this->getController()->spec()->getIsWpmsNetworkAdminOnly() ) {
 			$sUrl = network_admin_url( $sUrl );
 		}
 		else {
@@ -443,11 +444,11 @@ abstract class Base {
 	 * @return bool
 	 */
 	public function hasPluginManageRights() {
-		if ( !current_user_can( $this->getController()->getBasePermissions() ) ) {
+		if ( !current_user_can( $this->getController()->spec()->getBasePermissions() ) ) {
 			return false;
 		}
 
-		$oWpFunc = $this->loadWpFunctionsProcessor();
+		$oWpFunc = Services::WpGeneral();
 		if ( is_admin() && !$oWpFunc->isMultisite() ) {
 			return true;
 		}
@@ -512,7 +513,7 @@ abstract class Base {
 	 */
 	public function getVersion() {
 		$sVersion = $this->getOpt( self::PluginVersionKey );
-		return empty( $sVersion )? $this->getController()->getVersion() : $sVersion;
+		return empty( $sVersion )? $this->getController()->spec()->getVersion() : $sVersion;
 	}
 
 	/**
@@ -542,7 +543,7 @@ abstract class Base {
 	}
 
 	protected function setupAjaxHandlers() {
-		if ( $this->loadWpFunctionsProcessor()->getIsAjax() ) {
+		if ( Services::WpGeneral()->getIsAjax() ) {
 			if ( is_admin() || is_network_admin() ) {
 				$this->adminAjaxHandlers();
 			}
@@ -559,7 +560,7 @@ abstract class Base {
 	 */
 	protected function checkAjaxNonce() {
 
-		$sNonce = $this->loadDataProcessor()->FetchRequest( '_ajax_nonce', '' );
+		$sNonce = Services::Data()->FetchRequest( '_ajax_nonce', '' );
 		if ( empty( $sNonce ) ) {
 			$sMessage = $this->getTranslatedString( 'nonce_failed_empty', 'Nonce security checking failed - the nonce value was empty.' );
 		}
@@ -713,14 +714,16 @@ abstract class Base {
 	}
 
 	/**
-	 * @param $aOptionsParams
+	 * @param array $aOptionsParams
+	 * @return array
 	 */
 	protected function loadStrings_Options( $aOptionsParams ) {
 		return $aOptionsParams;
 	}
 
 	/**
-	 * @param $aOptionsParams
+	 * @param array $aOptionsParams
+	 * @return array
 	 */
 	protected function loadStrings_SectionTitles( $aOptionsParams ) {
 		return $aOptionsParams;
@@ -796,7 +799,7 @@ abstract class Base {
 	 * @return bool
 	 */
 	protected function doSaveStandardOptions() {
-		$oDp = $this->loadDataProcessor();
+		$oDp = Services::Data();
 		$sAllOptions = $oDp->FetchPost( $this->prefixOptionKey( 'all_options_input' ) );
 
 		if ( empty( $sAllOptions ) ) {
@@ -824,7 +827,7 @@ abstract class Base {
 		if ( empty( $sAllOptionsInput ) ) {
 			return true;
 		}
-		$oDp = $this->loadDataProcessor();
+		$oDp = Services::Data();
 
 		$aAllInputOptions = explode( self::CollateSeparator, $sAllOptionsInput );
 		foreach ( $aAllInputOptions as $sInputKey ) {
@@ -932,8 +935,7 @@ abstract class Base {
 	 * @return bool
 	 */
 	public function getIsCurrentPageConfig() {
-		$oWpFunctions = $this->loadWpFunctionsProcessor();
-		return $oWpFunctions->getCurrentWpAdminPage() == $this->doPluginPrefix( $this->getFeatureSlug() );
+		return Services::WpGeneral()->getCurrentWpAdminPage() == $this->doPluginPrefix( $this->getFeatureSlug() );
 	}
 
 	/**
@@ -943,8 +945,8 @@ abstract class Base {
 		$oCon = $this->getController();
 		self::$sActivelyDisplayedModuleOptions = $this->getFeatureSlug();
 		return array(
-			'var_prefix'		=> $oCon->getOptionStoragePrefix(),
-			'sPluginName'		=> $oCon->getHumanName(),
+			'var_prefix'		=> $oCon->getPluginPrefix()->getOptionStoragePrefix(),
+			'sPluginName'		=> $oCon->spec()->getHumanName(),
 			'sFeatureName'		=> $this->getMainFeatureName(),
 			'bFeatureEnabled'	=> $this->getIsMainFeatureEnabled(),
 			'sTagline'			=> $this->getConfigVo()->getTagline(),
@@ -988,7 +990,7 @@ abstract class Base {
 	 * @return bool
 	 */
 	protected function display( $aData = array(), $sSubView = '' ) {
-		$oRndr = $this->loadRenderer( $this->getController()->getPath_Templates());
+		$oRndr = Services::Render( $this->getController()->getPluginPaths()->getPath_Templates() );
 
 		// Get Base Data
 		$aData = apply_filters( $this->doPluginPrefix( $this->getFeatureSlug().'display_data' ), array_merge( $this->getBaseDisplayData(), $aData ) );
@@ -1002,7 +1004,7 @@ abstract class Base {
 			$sSubView = 'feature-default';
 		}
 
-		$aData[ 'sFeatureInclude' ] = $this->loadDataProcessor()->addExtensionToFilePath( $sSubView, '.php' );
+		$aData[ 'sFeatureInclude' ] = Services::Data()->addExtensionToFilePath( $sSubView, '.php' );
 		$aData[ 'strings' ] = array_merge( $aData[ 'strings' ], $this->getDisplayStrings() );
 		try {
 			echo $oRndr
@@ -1010,7 +1012,7 @@ abstract class Base {
 				->setRenderVars( $aData )
 				->render();
 		}
-		catch( Exception $oE ) {
+		catch( \Exception $oE ) {
 			echo $oE->getMessage();
 		}
 	}
@@ -1032,7 +1034,7 @@ abstract class Base {
 		}
 
 		if ( empty( $sSubView ) ) {
-			$oWpFs = $this->loadFileSystemProcessor();
+			$oWpFs = Services::WpFs();
 			$sFeatureInclude = 'feature-'.$this->getFeatureSlug();
 			if ( $oWpFs->exists( $oCon->getPath_TemplatesFile( $sFeatureInclude ) ) ) {
 				$sSubView = $sFeatureInclude;
@@ -1045,13 +1047,12 @@ abstract class Base {
 		$aData[ 'sFeatureInclude' ] = $sSubView;
 		$aData['strings'] = array_merge( $aData['strings'], $this->getDisplayStrings() );
 		try {
-			$this
-				->loadRenderer( $oCon->getPath_Templates() )
+			Services::Render( $oCon->getPluginPaths()->getPath_Templates() )
 				->setTemplate( 'features/'.$sSubView )
 				->setRenderVars( $aData )
 				->display();
 		}
-		catch( Exception $oE ) {
+		catch( \Exception $oE ) {
 			echo $oE->getMessage();
 		}
 	}
