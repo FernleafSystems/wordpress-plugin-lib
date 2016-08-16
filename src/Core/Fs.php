@@ -1,10 +1,10 @@
 <?php
 
-namespace Fernleaf\Wordpress\Helpers\Wp;
-
-use Fernleaf\Wordpress\Helpers\Base;
+namespace Fernleaf\Wordpress\Core;
 
 /**
+ * Class Fs
+ * @package Fernleaf\Wordpress\Core
  */
 class Fs extends Base {
 

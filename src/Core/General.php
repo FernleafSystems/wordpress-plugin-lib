@@ -1,8 +1,7 @@
 <?php
 
-namespace Fernleaf\Wordpress\Helpers\Wp;
+namespace Fernleaf\Wordpress\Core;
 
-use Fernleaf\Wordpress\Helpers\Base;
 use Fernleaf\Wordpress\Services;
 
 class General extends Base {

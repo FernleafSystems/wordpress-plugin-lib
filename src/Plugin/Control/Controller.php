@@ -1,6 +1,6 @@
 <?php
 
-namespace Fernleaf\Wordpress\Plugin;
+namespace Fernleaf\Wordpress\Plugin\Control;
 
 use Fernleaf\Wordpress\Plugin\Config\Reader;
 use Fernleaf\Wordpress\Plugin\Root\File as RootFile;

@@ -4,13 +4,13 @@ namespace Fernleaf\Wordpress;
 
 use Fernleaf\Wordpress\Helpers\Data;
 use Fernleaf\Wordpress\Helpers\IpUtils;
-use Fernleaf\Wordpress\Helpers\Wp\AdminNotices;
-use Fernleaf\Wordpress\Helpers\Wp\Cron;
-use Fernleaf\Wordpress\Helpers\Wp\Db;
-use Fernleaf\Wordpress\Helpers\Wp\Fs;
-use Fernleaf\Wordpress\Helpers\Wp\General;
-use Fernleaf\Wordpress\Helpers\Wp\Track;
-use Fernleaf\Wordpress\Helpers\Wp\Users;
+use Fernleaf\Wordpress\Core\AdminNotices;
+use Fernleaf\Wordpress\Core\Cron;
+use Fernleaf\Wordpress\Core\Db;
+use Fernleaf\Wordpress\Core\Fs;
+use Fernleaf\Wordpress\Core\General;
+use Fernleaf\Wordpress\Core\Track;
+use Fernleaf\Wordpress\Core\Users;
 use Pimple\Container;
 
 class Services {
