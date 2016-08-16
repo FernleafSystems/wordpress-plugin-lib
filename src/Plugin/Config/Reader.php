@@ -6,6 +6,11 @@ use Symfony\Component\Yaml\Yaml;
 
 class Reader {
 
+	/**
+	 * @param string $sPathToYaml
+	 * @return array
+	 * @throws \Exception
+	 */
 	static public function Read( $sPathToYaml ) {
 
 		$aSpec = array();

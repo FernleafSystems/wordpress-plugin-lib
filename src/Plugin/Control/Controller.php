@@ -3,6 +3,8 @@
 namespace Fernleaf\Wordpress\Plugin\Control;
 
 use Fernleaf\Wordpress\Plugin\Config\Reader;
+use Fernleaf\Wordpress\Plugin\Module\Options\Vo as OptionsVo;
+use Fernleaf\Wordpress\Plugin\Module\Configuration\Vo as ConfigVo;
 use Fernleaf\Wordpress\Plugin\Root\File as RootFile;
 use Fernleaf\Wordpress\Plugin\Root\Paths as RootPaths;
 use Fernleaf\Wordpress\Plugin\Paths\Derived as PluginPaths;
@@ -115,6 +117,30 @@ class Controller {
 	}
 
 	/**
+	 * @return boolean
+	 */
+	public function getIsResetPlugin() {
+		if ( !isset( $this->bResetPlugin ) ) {
+			$this->bResetPlugin = $this->checkFlagFile( 'reset' );
+		}
+		return $this->bResetPlugin;
+	}
+
+	/**
+	 * @param string $sFlag
+	 * @return bool
+	 */
+	protected function checkFlagFile( $sFlag ) {
+		$oFs = Services::WpFs();
+		$sFile = $this->getPluginPaths()->getPath_Flags( $sFlag );
+		$bExists = $oFs->isFile( $sFile );
+		if ( $bExists ) {
+			$oFs->deleteFile( $sFile );
+		}
+		return (bool)$bExists;
+	}
+
+	/**
 	 * @param bool $bRecreate
 	 * @param bool $bFullBuild
 	 * @return bool
@@ -174,8 +200,15 @@ class Controller {
 			$sFeatureName
 		);
 
+		// NEW: We inject the optionsVO into the constructor instead of relying on the Handler to create the optionsVo.
+		$sPathToYamlConfig = $this->getPluginPaths()->getPath_ModuleConfig( $sFeatureSlug );
+		$oOptionsVo = new OptionsVo( new ConfigVo( $sPathToYamlConfig ) );
 		if ( $bRecreate || !isset( $this->{$sOptionsVarName} ) ) {
-			$this->{$sOptionsVarName} = new $sClassName( $this, $aFeatureProperties );
+			$this->{$sOptionsVarName} = new $sClassName(
+				$this,
+				$oOptionsVo,
+				$aFeatureProperties
+			);
 		}
 		if ( $bFullBuild ) {
 			$this->{$sOptionsVarName}->buildOptions();
