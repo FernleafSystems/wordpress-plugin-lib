@@ -35,6 +35,13 @@ class Specification {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getBasePermissions() {
+		return $this->getProperty( 'base_permissions' );
+	}
+
+	/**
 	 * @param string $sKey
 	 * @return null|string
 	 */
@@ -71,6 +78,26 @@ class Specification {
 	 */
 	public function getMenuSpec( $sKey ) {
 		return $this->get( 'menu', $sKey );
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getPluginModules() {
+		$aActiveFeatures = $this->get( 'plugin_modules' );
+
+		$aPluginFeatures = array();
+		if ( empty( $aActiveFeatures ) || !is_array( $aActiveFeatures ) ) {
+			return $aPluginFeatures;
+		}
+
+		foreach( $aActiveFeatures as $nPosition => $aFeature ) {
+			if ( isset( $aFeature['hidden'] ) && $aFeature['hidden'] ) {
+				continue;
+			}
+			$aPluginFeatures[ $aFeature['slug'] ] = $aFeature;
+		}
+		return $aPluginFeatures;
 	}
 
 	/**

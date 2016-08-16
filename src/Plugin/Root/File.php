@@ -46,11 +46,4 @@ class File {
 		}
 		return $this->sPluginBaseFile;
 	}
-
-	/**
-	 * @return string
-	 */
-	public function getRootDir() {
-		return dirname( $this->getFullPath() ).DIRECTORY_SEPARATOR;
-	}
 }

@@ -3,15 +3,15 @@
 namespace Fernleaf\Wordpress\Plugin\Locale;
 
 use Fernleaf\Wordpress\Plugin\Config\SpecConsumer;
-use Fernleaf\Wordpress\Plugin\Utility\Paths;
+use Fernleaf\Wordpress\Plugin\Paths\Derived as DerivedPaths;
 
 class TextDomain extends SpecConsumer {
 
 	/**
-	 * @param Paths $oPluginPaths
+	 * @param DerivedPaths $oPluginPaths
 	 * @return bool
 	 */
-	public function loadTextDomain( Paths $oPluginPaths ) {
+	public function loadTextDomain( DerivedPaths $oPluginPaths ) {
 		return load_plugin_textdomain(
 			$this->getSpec()->getTextDomain(),
 			false,

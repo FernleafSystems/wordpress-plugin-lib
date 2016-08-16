@@ -1,27 +1,31 @@
 <?php
 
-namespace Fernleaf\Wordpress\Plugin\Utility;
+namespace Fernleaf\Wordpress\Plugin\Paths;
 
-use Fernleaf\Wordpress\Plugin\Config\SpecConsumer;
-use Fernleaf\Wordpress\Plugin\Config\Specification;
-use Fernleaf\Wordpress\Plugin\Root\Paths as RootPaths;
+use Fernleaf\Wordpress\Plugin\Root\Paths as RootPath;
 
-class Paths extends SpecConsumer {
+/**
+ * Class Derived
+ *
+ * Assumes:
+ * assets - store JS, CSS, Images in sub-dir to 'assets' folder
+ *
+ * @package Fernleaf\Wordpress\Plugin\Paths
+ */
+class Derived {
 
 	/**
-	 * @var RootPaths
+	 * @var RootPath
 	 */
-	private $oRootPaths;
+	private $oRootPath;
 
 	/**
-	 * Paths constructor.
+	 * Derived constructor.
 	 *
-	 * @param RootPaths $oRootPaths
-	 * @param Specification $oSpec
+	 * @param RootPath $oRootPaths
 	 */
-	public function __construct( $oRootPaths, $oSpec ) {
-		parent::__construct( $oSpec );
-		$this->oRootPaths = $oRootPaths;
+	public function __construct( $oRootPaths ) {
+		$this->oRootPath = $oRootPaths;
 	}
 
 	/**
@@ -29,7 +33,7 @@ class Paths extends SpecConsumer {
 	 * @return string
 	 */
 	public function getAbsolutePath( $sRelativePath ) {
-		$sRootDir = $this->oRootPaths->getRootDir();
+		$sRootDir = $this->oRootPath->getRootDir();
 		if ( strpos( $sRelativePath, $sRootDir ) === false ) {
 			$sFullPath = path_join( $sRootDir, $sRelativePath );
 		}
@@ -44,8 +48,8 @@ class Paths extends SpecConsumer {
 	 * @param string $sPath
 	 * @return string
 	 */
-	public function getPluginPath( $sBase, $sPath = '' ) {
-		return path_join( $this->getSpec()->getPath( $sBase ), $sPath );
+	protected function getPluginPath( $sBase, $sPath = '' ) {
+		return path_join( $this->oRootPath->getRootDir().$sBase, $sPath );
 	}
 
 	/**
@@ -110,7 +114,7 @@ class Paths extends SpecConsumer {
 	 * @return string
 	 */
 	public function getPath_Source( $sFile ) {
-		return $this->getAbsolutePath( $this->getPluginPath( 'source', $sFile ) );
+		return $this->getAbsolutePath( $this->getPluginPath( 'src', $sFile ) );
 	}
 
 	/**
@@ -133,7 +137,7 @@ class Paths extends SpecConsumer {
 	 * @return string
 	 */
 	public function getPluginUrl_Asset( $sAsset ) {
-		return $this->oRootPaths->getPluginUrl( $this->getPath_Assets( $sAsset, false ) );
+		return $this->oRootPath->getPluginUrl( $this->getPath_Assets( $sAsset, false ) );
 	}
 
 	/**

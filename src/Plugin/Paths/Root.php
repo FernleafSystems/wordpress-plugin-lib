@@ -17,6 +17,11 @@ class Paths {
 	/**
 	 * @var string
 	 */
+	private $sPluginRootDir;
+
+	/**
+	 * @var string
+	 */
 	protected $sPluginUrl;
 
 	/**
@@ -38,9 +43,13 @@ class Paths {
 	}
 
 	/**
+	 * Always with trailing slash
 	 * @return string
 	 */
 	public function getRootDir() {
-		return $this->oFile->getRootDir(); // todo: duplication
+		if ( !isset( $this->sPluginRootDir ) ) {
+			$this->sPluginRootDir = rtrim( dirname( $this->oFile->getFullPath() ), DIRECTORY_SEPARATOR ).DIRECTORY_SEPARATOR;
+		}
+		return $this->sPluginRootDir;
 	}
 }
