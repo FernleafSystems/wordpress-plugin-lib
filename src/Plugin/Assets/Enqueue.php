@@ -4,7 +4,7 @@ namespace Fernleaf\Wordpress\Plugin\Assets;
 
 use Fernleaf\Wordpress\Plugin\Config\SpecConsumer;
 use Fernleaf\Wordpress\Plugin\Config\Specification;
-use Fernleaf\Wordpress\Plugin\Utility\Paths;
+use Fernleaf\Wordpress\Plugin\Paths\Derived as PluginPaths;
 use Fernleaf\Wordpress\Plugin\Utility\Prefix;
 
 class Enqueue extends SpecConsumer{
@@ -16,16 +16,16 @@ class Enqueue extends SpecConsumer{
 	/**
 	 * @param Specification $oSpec
 	 * @param Prefix $oPrefix
-	 * @param Paths $oPluginPaths
+	 * @param PluginPaths $oPluginPaths
 	 */
 	public function __construct( $oSpec, $oPrefix, $oPluginPaths ) {
 		parent::__construct( $oSpec );
 		$this->oPrefix = $oPrefix;
 		$this->oPluginPaths = $oPluginPaths;
-		$this->run();
+		$this->init();
 	}
 
-	protected function run() {
+	protected function init() {
 		add_action( 'wp_enqueue_scripts', 		array( $this, 'onWpEnqueueFrontendCss' ), 99 );
 		add_action( 'admin_enqueue_scripts', 	array( $this, 'onWpEnqueueAdminCss' ), 99 );
 		add_action( 'admin_enqueue_scripts', 	array( $this, 'onWpEnqueueAdminJs' ), 99 );

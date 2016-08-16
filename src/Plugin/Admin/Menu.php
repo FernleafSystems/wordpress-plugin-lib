@@ -4,7 +4,7 @@ namespace Fernleaf\Wordpress\Plugin\Admin;
 
 use Fernleaf\Wordpress\Plugin\Config\SpecConsumer;
 use Fernleaf\Wordpress\Plugin\Config\Specification;
-use Fernleaf\Wordpress\Plugin\Utility\Labels;
+use Fernleaf\Wordpress\Plugin\Labels\Labels;
 use Fernleaf\Wordpress\Plugin\Utility\Prefix;
 
 class Menu extends SpecConsumer {
@@ -26,7 +26,7 @@ class Menu extends SpecConsumer {
 	 * @param Prefix $oPrefix
 	 * @param Specification $oSpec
 	 */
-	public function __construct( $oLabels, $oPrefix, $oSpec ) {
+	public function __construct( $oSpec, $oLabels, $oPrefix ) {
 		parent::__construct( $oSpec );
 		$this->oPrefix = $oPrefix;
 		$this->oLabels = $oLabels;
@@ -75,7 +75,7 @@ class Menu extends SpecConsumer {
 			add_menu_page(
 				$this->getHumanName(),
 				$sMenuTitle,
-				$this->getBasePermissions(),
+				$this->getSpec()->getBasePermissions(),
 				$sFullParentMenuId,
 				array( $this, $oSpec->getMenuSpec( 'callback' ) ),
 				$sIconUrl
@@ -83,7 +83,7 @@ class Menu extends SpecConsumer {
 
 			if ( $oSpec->getMenuSpec( 'has_submenu' ) ) {
 
-				$aPluginMenuItems = apply_filters( $this->doPluginPrefix( 'filter_plugin_submenu_items' ), array() );
+				$aPluginMenuItems = apply_filters( $this->oPrefix->doPluginPrefix( 'filter_plugin_submenu_items' ), array() );
 				if ( !empty( $aPluginMenuItems ) ) {
 					foreach ( $aPluginMenuItems as $sMenuTitle => $aMenu ) {
 						list( $sMenuItemText, $sMenuItemId, $aMenuCallBack ) = $aMenu;
@@ -91,7 +91,7 @@ class Menu extends SpecConsumer {
 							$sFullParentMenuId,
 							$sMenuTitle,
 							$sMenuItemText,
-							$this->getBasePermissions(),
+							$this->getSpec()->getBasePermissions(),
 							$sMenuItemId,
 							$aMenuCallBack
 						);

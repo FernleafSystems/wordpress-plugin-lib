@@ -29,7 +29,7 @@ class Labels extends SpecConsumer {
 	 * @param Prefix $oPrefix
 	 * @param Specification $oSpec
 	 */
-	public function __construct( $oRootFile, $oPrefix, $oSpec ) {
+	public function __construct( $oSpec, $oRootFile, $oPrefix ) {
 		parent::__construct( $oSpec );
 		$this->oPrefix = $oPrefix;
 		$this->oRootFile = $oRootFile;
@@ -44,7 +44,6 @@ class Labels extends SpecConsumer {
 	 * @return array
 	 */
 	public function doPluginLabels( $aPlugins ) {
-		$aLabelData = $this->all();
 		if ( empty( $aLabelData ) ) {
 			return $aPlugins;
 		}

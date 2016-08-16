@@ -2,12 +2,21 @@
 
 namespace Fernleaf\Wordpress\Plugin\Control;
 
+use Fernleaf\Wordpress\Plugin\Admin\Menu;
 use Fernleaf\Wordpress\Plugin\Config\Reader;
+use Fernleaf\Wordpress\Plugin\Labels\ActionLinks;
+use Fernleaf\Wordpress\Plugin\Labels\Hide;
+use Fernleaf\Wordpress\Plugin\Labels\Labels;
+use Fernleaf\Wordpress\Plugin\Labels\RowMeta;
+use Fernleaf\Wordpress\Plugin\Labels\UpdateMessage;
+use Fernleaf\Wordpress\Plugin\Locale\TextDomain;
 use Fernleaf\Wordpress\Plugin\Module\Options\Vo as OptionsVo;
 use Fernleaf\Wordpress\Plugin\Module\Configuration\Vo as ConfigVo;
+use Fernleaf\Wordpress\Plugin\Request\Handlers\Forms;
 use Fernleaf\Wordpress\Plugin\Root\File as RootFile;
 use Fernleaf\Wordpress\Plugin\Root\Paths as RootPaths;
 use Fernleaf\Wordpress\Plugin\Paths\Derived as PluginPaths;
+use Fernleaf\Wordpress\Plugin\Updates\Automatic as AutomaticUpdates;
 use Fernleaf\Wordpress\Plugin\Utility\Prefix;
 use Fernleaf\Wordpress\Services;
 use Pimple\Container;
@@ -40,6 +49,16 @@ class Controller {
 	protected $oPluginPrefix;
 
 	/**
+	 * @var Menu
+	 */
+	protected $oAdminMenu;
+
+	/**
+	 * @var Labels
+	 */
+	protected $oLabels;
+
+	/**
 	 * @var PluginPaths
 	 */
 	private $oPluginPaths;
@@ -56,39 +75,85 @@ class Controller {
 
 	/**
 	 */
+	protected function doRegisterHooks() {
+		$this->registerActivationHooks();
+		add_action( 'init',			array( $this, 'onWpInit' ) );
+		add_action( 'admin_init',	array( $this, 'onWpAdminInit' ) );
+		add_action( 'wp_loaded',	array( $this, 'onWpLoaded' ) );
+		add_action( 'shutdown',		array( $this, 'onWpShutdown' ) );
+
+//		add_filter( 'site_transient_update_plugins',	array( $this, 'filter_hidePluginUpdatesFromUI' ) ); put this in WP Functions
+		// outsource the collection of admin notices
+		if ( is_admin() ) {
+			$this->loadAdminNoticesProcessor()->setActionPrefix( $this->doPluginPrefix() );
+		}
+	}
+
+	/**
+	 */
+	public function onWpInit() {
+		$this->bMeetsBasePermissions = current_user_can( $this->spec()->getBasePermissions() );
+	}
+
+	/**
+	 */
 	public function onWpPluginsLoaded() {
-		$oTd = new \Fernleaf\Wordpress\Plugin\Locale\TextDomain( $this->spec() );
+		$oTd = new TextDomain( $this->spec() );
 		$oTd->loadTextDomain( $this->getPluginPaths() );
 		$this->doRegisterHooks();
 	}
 
 	/**
 	 */
-	protected function doRegisterHooks() {
-		$this->registerActivationHooks();
-
-		add_action( 'init',			        			array( $this, 'onWpInit' ) );
-		add_action( 'admin_init',						array( $this, 'onWpAdminInit' ) );
-		add_action( 'wp_loaded',			    		array( $this, 'onWpLoaded' ) );
-
-		if ( $this->getIsValidAdminArea() ) { // TODO: Move to appropriate place, e.g. admin_init
-			$this->oAdminMenu = new \Fernleaf\Wordpress\Plugin\Admin\Menu( $this->oLabels, $this->oPrefix, $this->oSpec );
+	public function onWpAdminInit() {
+		if ( $this->spec()->getProperty( 'show_dashboard_widget' ) === true ) {
+			add_action( 'wp_dashboard_setup', array( $this, 'onWpDashboardSetup' ) );
 		}
+		add_action( 'admin_enqueue_scripts', 	array( $this, 'onWpEnqueueAdminCss' ), 99 );
+		add_action( 'admin_enqueue_scripts', 	array( $this, 'onWpEnqueueAdminJs' ), 99 );
 
-		add_filter( 'all_plugins', 						array( $this, 'filter_hidePluginFromTableList' ) );
-		add_filter( 'plugin_action_links_'.$this->oRootFile->getPluginBaseFile(), array( $this, 'onWpPluginActionLinks' ), 50, 1 );
-		add_filter( 'plugin_row_meta',					array( $this, 'onPluginRowMeta' ), 50, 2 );
-		add_filter( 'site_transient_update_plugins',	array( $this, 'filter_hidePluginUpdatesFromUI' ) );
-		add_action( 'in_plugin_update_message-'.$this->oRootFile->getPluginBaseFile(), array( $this, 'onWpPluginUpdateMessage' ) );
+		$this->getLabels(); // initiates the necessary.
+		if ( $this->getIsValidAdminArea() ) {
+			// initiates the necessary.
+			$this->getMenu();
+			new Forms( $this->getPluginPrefix() );
+			new Hide( $this->spec(), $this->getPluginPrefix(), $this->getRootFile() );
+			new ActionLinks( $this->spec(), $this->getRootFile() );
+			new RowMeta( $this->spec(), $this->getRootFile() );
+			new UpdateMessage( $this->spec(), $this->getPluginPrefix(), $this->getRootFile() );
+		}
+	}
 
-		add_filter( 'auto_update_plugin',						array( $this, 'onWpAutoUpdate' ), 10001, 2 );
-		add_filter( 'set_site_transient_update_plugins',		array( $this, 'setUpdateFirstDetectedAt' ) );
+	/**
+	 */
+	public function onWpLoaded() {
+		new AutomaticUpdates( $this->spec(), $this->getRootFile() );
 
-		add_action( 'shutdown',							array( $this, 'onWpShutdown' ) );
+		if ( $this->getIsValidAdminArea() ) {
+			$this->downloadOptionsExport();
+		}
+	}
 
-		// outsource the collection of admin notices
-		if ( is_admin() ) {
-			$this->loadAdminNoticesProcessor()->setActionPrefix( $this->doPluginPrefix() );
+	/**
+	 * Hooked to 'shutdown'
+	 */
+	public function onWpShutdown() {
+		do_action( $this->getPluginPrefix()->doPluginPrefix( 'pre_plugin_shutdown' ) );
+		do_action( $this->getPluginPrefix()->doPluginPrefix( 'plugin_shutdown' ) );
+		$this->saveCurrentPluginControllerOptions();
+		$this->deleteFlags();
+	}
+
+	/**
+	 */
+	protected function deleteFlags() {
+		$oFS = Services::WpFs();
+		$oPaths = $this->getPluginPaths();
+		if ( $oFS->exists( $oPaths->getPath_Flags( 'rebuild' ) ) ) {
+			$oFS->deleteFile( $oPaths->getPath_Flags( 'rebuild' ) );
+		}
+		if ( $this->getIsResetPlugin() ) {
+			$oFS->deleteFile( $oPaths->getPath_Flags( 'reset' ) );
 		}
 	}
 
@@ -124,6 +189,25 @@ class Controller {
 			$this->bResetPlugin = $this->checkFlagFile( 'reset' );
 		}
 		return $this->bResetPlugin;
+	}
+
+	/**
+	 * @param bool $bCheckUserPermissions
+	 * @return bool
+	 */
+	public function getIsValidAdminArea( $bCheckUserPermissions = true ) {
+		if ( $bCheckUserPermissions && $this->loadWpTrack()->getWpActionHasFired( 'init' ) && !current_user_can( $this->getBasePermissions() ) ) {
+			return false;
+		}
+
+		$oWp = Services::WpGeneral();
+		if ( !$oWp->isMultisite() && is_admin() ) {
+			return true;
+		}
+		else if ( $oWp->isMultisite() && is_network_admin() && $this->spec()->getIsWpmsNetworkAdminOnly() ) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -242,14 +326,25 @@ class Controller {
 	}
 
 	/**
-	 * @return RootFile
+	 * @return Labels
 	 */
-	public function getRootFile() {
-		if ( !isset( $this->oRootFile ) ) {
-			$this->oRootFile = new RootPaths( $this->getRootFile() );
+	public function getLabels() {
+		if ( !isset( $this->oLabels ) ) {
+			$this->oLabels = new Labels( $this->spec(), $this->getRootFile(), $this->getPluginPrefix() );
 		}
-		return $this->oRootFile;
+		return $this->oLabels;
 	}
+
+	/**
+	 * @return Menu
+	 */
+	public function getMenu() {
+		if ( !isset( $this->oAdminMenu ) ) {
+			$this->oAdminMenu = new Menu( $this->spec(), $this->getLabels(), $this->getPluginPrefix() );
+		}
+		return $this->oAdminMenu;
+	}
+
 
 	/**
 	 * @return PluginPaths
@@ -269,6 +364,15 @@ class Controller {
 			$this->oPluginPrefix = new Prefix( $this->spec() );
 		}
 		return $this->oPluginPrefix;
+	}
+	/**
+	 * @return RootFile
+	 */
+	public function getRootFile() {
+		if ( !isset( $this->oRootFile ) ) {
+			$this->oRootFile = new RootPaths( $this->getRootFile() );
+		}
+		return $this->oRootFile;
 	}
 
 	/**
@@ -308,7 +412,7 @@ class Controller {
 	 * @return string
 	 */
 	private function getPathPluginSpec() {
-		return $this->oPluginPaths->getPath_Root( 'plugin-spec.php' );
+		return $this->getPluginPaths()->getPath_Root( 'plugin-spec.php' );
 	}
 
 }
