@@ -565,10 +565,11 @@ class General extends Base {
 	 */
 	public function getIsLoginRequest() {
 		$oDp = Services::Data();
+		$oReq = Services::Request();
 		return
 			$oDp->GetIsRequestPost()
-			&& !is_null( $oDp->FetchPost( 'log' ) )
-			&& !is_null( $oDp->FetchPost( 'pwd' ) )
+			&& !is_null( $oReq->request->get( 'log' ) )
+			&& !is_null( $oReq->request->get( 'pwd' ) )
 			&& $this->getIsLoginUrl();
 	}
 
@@ -577,10 +578,11 @@ class General extends Base {
 	 */
 	public function getIsRegisterRequest() {
 		$oDp = Services::Data();
+		$oReq = Services::Request();
 		return
 			$oDp->GetIsRequestPost()
-			&& !is_null( $oDp->FetchPost( 'user_login' ) )
-			&& !is_null( $oDp->FetchPost( 'user_email' ) )
+			&& !is_null( $oReq->request->get( 'user_login' ) )
+			&& !is_null( $oReq->request->get( 'user_email' ) )
 			&& $this->getIsLoginUrl();
 	}
 

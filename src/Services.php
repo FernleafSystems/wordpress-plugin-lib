@@ -2,8 +2,6 @@
 
 namespace Fernleaf\Wordpress;
 
-use Fernleaf\Wordpress\Helpers\Data;
-use Fernleaf\Wordpress\Helpers\IpUtils;
 use Fernleaf\Wordpress\Core\AdminNotices;
 use Fernleaf\Wordpress\Core\Cron;
 use Fernleaf\Wordpress\Core\Db;
@@ -11,15 +9,23 @@ use Fernleaf\Wordpress\Core\Fs;
 use Fernleaf\Wordpress\Core\General;
 use Fernleaf\Wordpress\Core\Track;
 use Fernleaf\Wordpress\Core\Users;
+use Fernleaf\Wordpress\Utilities\Data;
+use Fernleaf\Wordpress\Utilities\IpUtils;
 use Fernleaf\Wordpress\Utilities\Render;
 use Pimple\Container;
+use Symfony\Component\HttpFoundation\Request;
 
 class Services {
 
 	/**
 	 * @var \Pimple\Container
 	 */
-	protected static $oDic;
+	static protected $oDic;
+
+	/**
+	 * @var Request
+	 */
+	static protected $oRequest;
 
 	public function __construct() {
 		self::$oDic = new Container();
@@ -29,6 +35,9 @@ class Services {
 	public function registerAll() {
 		self::$oDic['service_data'] = function() {
 			return Data::GetInstance();
+		};
+		self::$oDic['service_request'] = function() {
+			return Request::createFromGlobals();
 		};
 		self::$oDic['service_render'] = function() {
 			return new Render();
@@ -57,6 +66,16 @@ class Services {
 		self::$oDic['service_wp_users'] = function() {
 			return Users::GetInstance();
 		};
+	}
+
+	/**
+	 * @return Request
+	 */
+	static public function Request() {
+		if ( !isset( self::$oRequest ) ) {
+			self::$oRequest = self::$oDic[ 'service_request' ];
+		}
+		return self::$oRequest;
 	}
 
 	/**

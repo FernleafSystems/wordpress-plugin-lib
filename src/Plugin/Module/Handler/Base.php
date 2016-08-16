@@ -792,9 +792,8 @@ abstract class Base {
 	 * @return bool
 	 */
 	protected function doSaveStandardOptions() {
-		$oDp = Services::Data();
-		$sAllOptions = $oDp->FetchPost( $this->prefixOptionKey( 'all_options_input' ) );
-
+		$oReq = Services::Request();
+		$sAllOptions = $oReq->request->get( $this->prefixOptionKey( 'all_options_input' ) );
 		if ( empty( $sAllOptions ) ) {
 			return true;
 		}
@@ -821,13 +820,14 @@ abstract class Base {
 			return true;
 		}
 		$oDp = Services::Data();
+		$oReq = Services::Request();
 
 		$aAllInputOptions = explode( self::CollateSeparator, $sAllOptionsInput );
 		foreach ( $aAllInputOptions as $sInputKey ) {
 			$aInput = explode( ':', $sInputKey );
 			list( $sOptionType, $sOptionKey ) = $aInput;
 
-			$sOptionValue = $oDp->FetchPost( $this->prefixOptionKey( $sOptionKey ) );
+			$sOptionValue = $oReq->request->get( $this->prefixOptionKey( $sOptionKey ) );
 			if ( is_null( $sOptionValue ) ) {
 
 				if ( $sOptionType == 'text' || $sOptionType == 'email' ) { //if it was a text box, and it's null, don't update anything

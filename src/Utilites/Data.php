@@ -1,6 +1,8 @@
 <?php
 
-namespace Fernleaf\Wordpress\Helpers;
+namespace Fernleaf\Wordpress\Utilities;
+
+use Fernleaf\Wordpress\Services;
 
 class Data extends Base {
 
@@ -358,13 +360,6 @@ class Data extends Base {
 	}
 
 	/**
-	 * @return bool
-	 */
-	static public function GetUseFilterInput() {
-		return self::$bUseFilterInput && function_exists( 'filter_input' );
-	}
-
-	/**
 	 * @param array $aArray
 	 * @param string $sKey		The array key to fetch
 	 * @param mixed $mDefault
@@ -383,13 +378,7 @@ class Data extends Base {
 	 * @return mixed|null
 	 */
 	public static function FetchCookie( $sKey, $mDefault = null ) {
-		if ( self::GetUseFilterInput() && defined( 'INPUT_COOKIE' ) ) {
-			$mPossible = filter_input( INPUT_COOKIE, $sKey );
-			if ( !empty( $mPossible ) ) {
-				return $mPossible;
-			}
-		}
-		return self::ArrayFetch( $_COOKIE, $sKey, $mDefault );
+		Services::Request()->cookies->get( $sKey, $mDefault );
 	}
 
 	/**
@@ -398,12 +387,6 @@ class Data extends Base {
 	 * @return mixed|null
 	 */
 	public static function FetchEnv( $sKey, $mDefault = null ) {
-		if ( self::GetUseFilterInput() && defined( 'INPUT_ENV' ) ) {
-			$sPossible = filter_input( INPUT_ENV, $sKey );
-			if ( !empty( $sPossible ) ) {
-				return $sPossible;
-			}
-		}
 		return self::ArrayFetch( $_ENV, $sKey, $mDefault );
 	}
 
@@ -413,13 +396,7 @@ class Data extends Base {
 	 * @return mixed|null
 	 */
 	public static function FetchGet( $sKey, $mDefault = null ) {
-		if ( self::GetUseFilterInput() && defined( 'INPUT_GET' ) ) {
-			$mPossible = filter_input( INPUT_GET, $sKey );
-			if ( !empty( $mPossible ) ) {
-				return $mPossible;
-			}
-		}
-		return self::ArrayFetch( $_GET, $sKey, $mDefault );
+		Services::Request()->query->get( $sKey, $mDefault );
 	}
 	/**
 	 * @param string $sKey		The $_POST key
@@ -427,13 +404,7 @@ class Data extends Base {
 	 * @return mixed|null
 	 */
 	public static function FetchPost( $sKey, $mDefault = null ) {
-		if ( self::GetUseFilterInput() && defined( 'INPUT_POST' ) ) {
-			$mPossible = filter_input( INPUT_POST, $sKey );
-			if ( !empty( $mPossible ) ) {
-				return $mPossible;
-			}
-		}
-		return self::ArrayFetch( $_POST, $sKey, $mDefault );
+		Services::Request()->request->get( $sKey, $mDefault );
 	}
 
 	/**
@@ -444,11 +415,12 @@ class Data extends Base {
 	 * @return mixed|null
 	 */
 	public static function FetchRequest( $sKey, $bIncludeCookie = false, $mDefault = null ) {
-		$mFetchVal = self::FetchPost( $sKey );
+		$oReq = Services::Request();
+		$mFetchVal = $oReq->request->get( $sKey );
 		if ( is_null( $mFetchVal ) ) {
-			$mFetchVal = self::FetchGet( $sKey );
-			if ( is_null( $mFetchVal && $bIncludeCookie ) ) {
-				$mFetchVal = self::FetchCookie( $sKey );
+			$mFetchVal = $oReq->query->get( $sKey );
+			if ( $bIncludeCookie && is_null( $mFetchVal ) ) {
+				$mFetchVal = $oReq->cookies->get( $sKey );
 			}
 		}
 		return is_null( $mFetchVal )? $mDefault : $mFetchVal;
@@ -460,13 +432,7 @@ class Data extends Base {
 	 * @return mixed|null
 	 */
 	public static function FetchServer( $sKey, $mDefault = null ) {
-		if ( self::GetUseFilterInput() && defined( 'INPUT_SERVER' ) ) {
-			$sPossible = filter_input( INPUT_SERVER, $sKey );
-			if ( !empty( $sPossible ) ) {
-				return $sPossible;
-			}
-		}
-		return self::ArrayFetch( $_SERVER, $sKey, $mDefault );
+		Services::Request()->server->get( $sKey, $mDefault );
 	}
 
 	/**

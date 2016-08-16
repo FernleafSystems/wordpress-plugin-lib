@@ -1,10 +1,11 @@
 <?php
 
-namespace Fernleaf\Wordpress\Plugin\Utility;
+namespace Fernleaf\Wordpress\Plugin\Labels;
 
 use Fernleaf\Wordpress\Plugin\Config\SpecConsumer;
 use Fernleaf\Wordpress\Plugin\Config\Specification;
 use Fernleaf\Wordpress\Plugin\Root\File as RootFile;
+use Fernleaf\Wordpress\Plugin\Utility\Prefix;
 
 class Labels extends SpecConsumer {
 
