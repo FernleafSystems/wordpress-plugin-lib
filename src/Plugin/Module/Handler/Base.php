@@ -274,7 +274,7 @@ abstract class Base {
 		if ( !isset( $this->oFeatureProcessor ) ) {
 			$sClassName = sprintf(
 				'\Fernleaf\Wordpress\Plugin\Module\Handler\%s\%s',
-				ucwords( $this->getController()->spec()->getPluginSlug() ),
+				ucwords( $this->getController()->config()->getPluginSlug() ),
 				str_replace( ' ', '', ucwords( str_replace( '_', ' ', $this->getFeatureSlug() ) ) )
 			);
 			$this->oFeatureProcessor = new $sClassName( $this );
@@ -287,7 +287,7 @@ abstract class Base {
 	 */
 	public function getFeatureAdminPageUrl() {
 		$sUrl = sprintf( 'admin.php?page=%s', $this->doPluginPrefix( $this->getFeatureSlug() ) );
-		if ( $this->getController()->spec()->getIsWpmsNetworkAdminOnly() ) {
+		if ( $this->getController()->config()->getIsWpmsNetworkAdminOnly() ) {
 			$sUrl = network_admin_url( $sUrl );
 		}
 		else {
@@ -444,7 +444,7 @@ abstract class Base {
 	 * @return bool
 	 */
 	public function hasPluginManageRights() {
-		if ( !current_user_can( $this->getController()->spec()->getBasePermissions() ) ) {
+		if ( !current_user_can( $this->getController()->config()->getBasePermissions() ) ) {
 			return false;
 		}
 
@@ -506,7 +506,7 @@ abstract class Base {
 	 */
 	public function getVersion() {
 		$sVersion = $this->getOpt( self::PluginVersionKey );
-		return empty( $sVersion )? $this->getController()->spec()->getVersion() : $sVersion;
+		return empty( $sVersion )? $this->getController()->config()->getVersion() : $sVersion;
 	}
 
 	/**
@@ -939,7 +939,7 @@ abstract class Base {
 		self::$sActivelyDisplayedModuleOptions = $this->getFeatureSlug();
 		return array(
 			'var_prefix'		=> $oCon->getPluginPrefix()->getOptionStoragePrefix(),
-			'sPluginName'		=> $oCon->spec()->getHumanName(),
+			'sPluginName'		=> $oCon->config()->getHumanName(),
 			'sFeatureName'		=> $this->getMainFeatureName(),
 			'bFeatureEnabled'	=> $this->getIsMainFeatureEnabled(),
 			'sTagline'			=> $this->getConfigVo()->getTagline(),

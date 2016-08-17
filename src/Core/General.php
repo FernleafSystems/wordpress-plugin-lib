@@ -731,7 +731,7 @@ class General extends Base {
 
 	/**
 	 * @param string $sKey
-	 * @return mixed
+	 * @return bool
 	 */
 	public function deleteOption( $sKey ) {
 		return $this->isMultisite() ? delete_site_option( $sKey ) : delete_option( $sKey );

@@ -4,6 +4,7 @@ namespace Fernleaf\Wordpress\Plugin\Control;
 
 use Fernleaf\Wordpress\Plugin\Admin\Menu;
 use Fernleaf\Wordpress\Plugin\Config\Build;
+use Fernleaf\Wordpress\Plugin\Config\Save;
 use Fernleaf\Wordpress\Plugin\Config\Verify;
 use Fernleaf\Wordpress\Plugin\Config\Configuration;
 use Fernleaf\Wordpress\Plugin\Labels\ActionLinks;
@@ -94,13 +95,13 @@ class Controller {
 	/**
 	 */
 	public function onWpInit() {
-		$this->bMeetsBasePermissions = current_user_can( $this->spec()->getBasePermissions() );
+		$this->bMeetsBasePermissions = current_user_can( $this->config()->getBasePermissions() );
 	}
 
 	/**
 	 */
 	public function onWpPluginsLoaded() {
-		$oTd = new TextDomain( $this->spec() );
+		$oTd = new TextDomain( $this->config() );
 		$oTd->loadTextDomain( $this->getPluginPaths() );
 		$this->doRegisterHooks();
 	}
@@ -108,7 +109,7 @@ class Controller {
 	/**
 	 */
 	public function onWpAdminInit() {
-		if ( $this->spec()->getProperty( 'show_dashboard_widget' ) === true ) {
+		if ( $this->config()->getProperty( 'show_dashboard_widget' ) === true ) {
 			add_action( 'wp_dashboard_setup', array( $this, 'onWpDashboardSetup' ) );
 		}
 		add_action( 'admin_enqueue_scripts', 	array( $this, 'onWpEnqueueAdminCss' ), 99 );
@@ -119,17 +120,17 @@ class Controller {
 			// initiates the necessary.
 			$this->getMenu();
 			new Forms( $this->getPluginPrefix() );
-			new Hide( $this->spec(), $this->getPluginPrefix(), $this->getRootFile() );
-			new ActionLinks( $this->spec(), $this->getRootFile() );
-			new RowMeta( $this->spec(), $this->getRootFile() );
-			new UpdateMessage( $this->spec(), $this->getPluginPrefix(), $this->getRootFile() );
+			new Hide( $this->config(), $this->getPluginPrefix(), $this->getRootFile() );
+			new ActionLinks( $this->config(), $this->getRootFile() );
+			new RowMeta( $this->config(), $this->getRootFile() );
+			new UpdateMessage( $this->config(), $this->getPluginPrefix(), $this->getRootFile() );
 		}
 	}
 
 	/**
 	 */
 	public function onWpLoaded() {
-		new AutomaticUpdates( $this->spec(), $this->getRootFile() );
+		new AutomaticUpdates( $this->config(), $this->getRootFile() );
 
 		if ( $this->getIsValidAdminArea() ) {
 			$this->downloadOptionsExport();
@@ -142,7 +143,7 @@ class Controller {
 	public function onWpShutdown() {
 		do_action( $this->getPluginPrefix()->doPluginPrefix( 'pre_plugin_shutdown' ) );
 		do_action( $this->getPluginPrefix()->doPluginPrefix( 'plugin_shutdown' ) );
-		$this->saveCurrentPluginControllerOptions();
+		$this->saveControllerConfig();
 		$this->deleteFlags();
 	}
 
@@ -172,9 +173,9 @@ class Controller {
 	 */
 	public function onWpDeactivatePlugin() {
 		$oPrefix = $this->getPluginPrefix();
-		if ( current_user_can( $this->spec()->getBasePermissions() ) && apply_filters( $oPrefix->doPluginPrefix( 'delete_on_deactivate' ), false ) ) {
+		if ( current_user_can( $this->config()->getBasePermissions() ) && apply_filters( $oPrefix->doPluginPrefix( 'delete_on_deactivate' ), false ) ) {
 			do_action( $oPrefix->doPluginPrefix( 'delete_plugin' ) );
-			$this->deletePluginControllerOptions();
+			$this->deleteControllerConfig();
 		}
 	}
 
@@ -206,7 +207,7 @@ class Controller {
 		if ( !$oWp->isMultisite() && is_admin() ) {
 			return true;
 		}
-		else if ( $oWp->isMultisite() && is_network_admin() && $this->spec()->getIsWpmsNetworkAdminOnly() ) {
+		else if ( $oWp->isMultisite() && is_network_admin() && $this->config()->getIsWpmsNetworkAdminOnly() ) {
 			return true;
 		}
 		return false;
@@ -232,7 +233,7 @@ class Controller {
 	 * @return bool
 	 */
 	public function loadAllFeatures( $bRecreate = false, $bFullBuild = false ) {
-		$aPluginFeatures = $this->spec()->getPluginModules();
+		$aPluginFeatures = $this->config()->getPluginModules();
 
 		$bSuccess = true;
 		foreach( $aPluginFeatures as $sSlug => $aFeatureProperties ) {
@@ -282,7 +283,7 @@ class Controller {
 
 		$sClassName = sprintf(
 			'\Fernleaf\Wordpress\Plugin\Module\Handler\%s\%s',
-			ucwords( $this->spec()->getPluginSlug() ),
+			ucwords( $this->config()->getPluginSlug() ),
 			$sFeatureName
 		);
 
@@ -303,21 +304,18 @@ class Controller {
 	}
 
 	/**
+	 * @return bool
 	 */
-	protected function deletePluginControllerOptions() {
-		$this->saveCurrentPluginControllerOptions( true );
+	protected function deleteControllerConfig() {
+		return Services::WpGeneral()->deleteOption( $this->getPluginControllerOptionsKey() );
 	}
 
 	/**
-	 * @param bool $bDelete
 	 */
-	protected function saveCurrentPluginControllerOptions( $bDelete = false ) {
-		$aOptions = $bDelete ? array() : $this->spec()->getDefinition();
-		if ( $this->sConfigOptionsHashWhenLoaded != md5( serialize( $aOptions ) ) ) {
-			add_filter( $this->getPluginPrefix()->doPluginPrefix( 'bypass_permission_to_manage' ), '__return_true' );
-			Services::WpGeneral()->updateOption( $this->getPluginControllerOptionsKey(), $aOptions );
-			remove_filter( $this->getPluginPrefix()->doPluginPrefix( 'bypass_permission_to_manage' ), '__return_true' );
-		}
+	protected function saveControllerConfig() {
+		add_filter( $this->getPluginPrefix()->doPluginPrefix( 'bypass_permission_to_manage' ), '__return_true' );
+		Save::ToWp( $this->config(), $this->getPluginControllerOptionsKey() );
+		remove_filter( $this->getPluginPrefix()->doPluginPrefix( 'bypass_permission_to_manage' ), '__return_true' );
 	}
 
 	/**
@@ -325,7 +323,7 @@ class Controller {
 	 */
 	public function getLabels() {
 		if ( !isset( $this->oLabels ) ) {
-			$this->oLabels = new Labels( $this->spec(), $this->getRootFile(), $this->getPluginPrefix() );
+			$this->oLabels = new Labels( $this->config(), $this->getRootFile(), $this->getPluginPrefix() );
 		}
 		return $this->oLabels;
 	}
@@ -335,7 +333,7 @@ class Controller {
 	 */
 	public function getMenu() {
 		if ( !isset( $this->oAdminMenu ) ) {
-			$this->oAdminMenu = new Menu( $this->spec(), $this->getLabels(), $this->getPluginPrefix() );
+			$this->oAdminMenu = new Menu( $this->config(), $this->getLabels(), $this->getPluginPrefix() );
 		}
 		return $this->oAdminMenu;
 	}
@@ -356,7 +354,7 @@ class Controller {
 	 */
 	public function getPluginPrefix() {
 		if ( !isset( $this->oPluginPrefix ) ) {
-			$this->oPluginPrefix = new Prefix( $this->spec() );
+			$this->oPluginPrefix = new Prefix( $this->config() );
 		}
 		return $this->oPluginPrefix;
 	}
@@ -383,17 +381,12 @@ class Controller {
 	/**
 	 * @return \Fernleaf\Wordpress\Plugin\Config\Configuration
 	 */
-	public function spec() {
-
+	public function config() {
 		if ( !isset( $this->oConfig ) || !$this->oConfig->hasDefinition() ) {
-			$sPathToSpec = $this->getPathPluginSpec();
-
 			$oDefinition = Services::WpGeneral()->getOption( $this->getPluginControllerOptionsKey() );
 			$this->oConfig = new Configuration( $oDefinition );
-			$bRebuild = Verify::IsRebuildRequired( $this->oConfig, $sPathToSpec );
-
-			if ( $bRebuild ) {
-				$this->oConfig = Build::FromFile( $sPathToSpec );
+			if ( Verify::IsRebuildRequired( $this->oConfig, $this->getPathPluginSpec() ) ) {
+				$this->oConfig = Build::FromFile( $this->getPathPluginSpec() );
 			}
 		}
 		return $this->oConfig;
@@ -407,6 +400,7 @@ class Controller {
 	}
 
 	/**
+	 * TODO: make unique
 	 * @return string
 	 */
 	private function getPluginControllerOptionsKey() {
