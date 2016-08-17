@@ -44,6 +44,7 @@ class Labels extends Consumer {
 	 * @return array
 	 */
 	public function doPluginLabels( $aPlugins ) {
+		$aLabelData = $this->all();
 		if ( empty( $aLabelData ) ) {
 			return $aPlugins;
 		}
@@ -56,6 +57,14 @@ class Labels extends Consumer {
 			}
 		}
 		return $aPlugins;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getHumanName() {
+		$aLabels = $this->all();
+		return empty( $aLabels[ 'Name' ] ) ? $this->getConfig()->getProperty( 'human_name' ) : $aLabels[ 'Name' ];
 	}
 
 	/**
@@ -93,7 +102,7 @@ class Labels extends Consumer {
 	 */
 	public function all() {
 		if ( !isset( $this->aFinalLabels ) || !is_array( $this->aFinalLabels ) ) {
-			$this->aFinalLabels = apply_filters( $this->oPrefix->doPluginPrefix( 'plugin_labels' ), $this->getSpec()->getLabels() );
+			$this->aFinalLabels = apply_filters( $this->oPrefix->doPluginPrefix( 'plugin_labels' ), $this->getConfig()->getLabels() );
 		}
 		return $this->aFinalLabels;
 	}

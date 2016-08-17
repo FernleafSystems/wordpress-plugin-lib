@@ -37,7 +37,7 @@ class Hide extends Consumer {
 	 * @return array
 	 */
 	public function hidePluginFromTableList( $aPlugins ) {
-		$bHide = apply_filters( $this->oPrefix->doPluginPrefix( 'hide_plugin' ), $this->getSpec()->getProperty( 'hide' ) );
+		$bHide = apply_filters( $this->oPrefix->doPluginPrefix( 'hide_plugin' ), $this->getConfig()->getProperty( 'hide' ) );
 		if ( $bHide ) {
 			$sPluginBaseFileName = $this->oRootFile->getPluginBaseFile();
 			if ( isset( $aPlugins[ $sPluginBaseFileName ] ) ) {

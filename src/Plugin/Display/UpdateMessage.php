@@ -13,13 +13,20 @@ class UpdateMessage extends Consumer {
 	 * @var Prefix
 	 */
 	private $oPrefix;
+	/**
+	 * @var Labels
+	 */
+	private $oLabels;
 
 	/**
+	 * UpdateMessage constructor.
+	 *
 	 * @param Configuration $oSpec
-	 * @param Prefix        $oPrefix
-	 * @param RootFile      $oRoot
+	 * @param Prefix $oPrefix
+	 * @param Labels $oLabels
+	 * @param RootFile $oRoot
 	 */
-	public function __construct( $oSpec, $oPrefix, $oRoot ) {
+	public function __construct( $oSpec, $oPrefix, $oLabels, $oRoot ) {
 		parent::__construct( $oSpec );
 		$this->oPrefix = $oPrefix;
 		add_action( 'in_plugin_update_message-'.$oRoot->getPluginBaseFile(), array( $this, 'onWpPluginUpdateMessage' ) );
@@ -29,7 +36,7 @@ class UpdateMessage extends Consumer {
 	 * Displays a message in the plugins listing when a plugin has an update available.
 	 */
 	public function onWpPluginUpdateMessage() {
-		$sDefault = sprintf( 'Upgrade Now To Get The Latest Available %s Features.', $this->getHumanName() );
+		$sDefault = sprintf( 'Upgrade Now To Get The Latest Available %s Features.', $this->oLabels->getHumanName() );
 		$sMessage = apply_filters( $this->oPrefix->doPluginPrefix( 'plugin_update_message' ), $sDefault );
 		if ( empty( $sMessage ) ) {
 			$sMessage = '';

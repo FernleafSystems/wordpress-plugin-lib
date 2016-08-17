@@ -7,7 +7,7 @@ class Consumer {
 	/**
 	 * @var Configuration
 	 */
-	private $oSpec;
+	private $oConfig;
 
 	/**
 	 * @param Configuration $oSpec
@@ -15,7 +15,7 @@ class Consumer {
 	 */
 	public function __construct( $oSpec = null ) {
 		if ( !empty( $oSpec ) ) {
-			$this->oSpec = $oSpec;
+			$this->oConfig = $oSpec;
 		}
 		else {
 			if ( !isset( $oSpec ) ) {
@@ -30,7 +30,7 @@ class Consumer {
 	/**
 	 * @return Configuration
 	 */
-	protected function getSpec() {
-		return $this->oSpec;
+	protected function getConfig() {
+		return $this->oConfig;
 	}
 }

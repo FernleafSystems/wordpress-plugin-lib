@@ -33,7 +33,7 @@ class RowMeta extends Consumer {
 	public function onPluginRowMeta( $aPluginMeta, $sPluginFile ) {
 
 		if ( $sPluginFile == $this->oRootFile->getPluginBaseFile() ) {
-			$aMeta = $this->getSpec()->getPluginMeta();
+			$aMeta = $this->getConfig()->getPluginMeta();
 
 			$sLinkTemplate = '<strong><a href="%s" target="%s">%s</a></strong>';
 			foreach( $aMeta as $aMetaLink ){

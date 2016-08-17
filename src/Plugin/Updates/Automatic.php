@@ -41,7 +41,7 @@ class Automatic extends Consumer {
 			// i.e. there's an update available
 			$sNewVersion = Services::WpGeneral()->getPluginUpdateNewVersion( $this->oRootFile->getPluginBaseFile() );
 			if ( !empty( $sNewVersion ) ) {
-				$this->getSpec()->setUpdateFirstDetected( $sNewVersion, Services::Data()->time() );
+				$this->getConfig()->setUpdateFirstDetected( $sNewVersion, Services::Data()->time() );
 			}
 		}
 		return $oPluginUpdateData;
@@ -70,7 +70,7 @@ class Automatic extends Consumer {
 
 		// The item in question is this plugin...
 		if ( $sItemFile === $this->oRootFile->getPluginBaseFile() ) {
-			$sAutoupdateSpec = $this->getSpec()->getProperty( 'autoupdate' );
+			$sAutoupdateSpec = $this->getConfig()->getProperty( 'autoupdate' );
 
 			$oWp = Services::WpGeneral();
 			if ( !$oWp->getIsRunningAutomaticUpdates() && $sAutoupdateSpec == 'confidence' ) {
@@ -91,7 +91,7 @@ class Automatic extends Consumer {
 					$bDoAutoUpdate = false;
 					$sNewVersion = $oWp->getPluginUpdateNewVersion( $sItemFile );
 					if ( !empty( $sNewVersion ) ) {
-						$nFirstDetected = $this->getSpec()->getUpdateFirstDetected( $sNewVersion );
+						$nFirstDetected = $this->getConfig()->getUpdateFirstDetected( $sNewVersion );
 						$nTimeUpdateAvailable =  Services::Data()->time() - $nFirstDetected;
 						$bDoAutoUpdate = ( $nFirstDetected > 0 && ( $nTimeUpdateAvailable > DAY_IN_SECONDS * 2 ) );
 					}

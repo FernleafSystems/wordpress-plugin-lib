@@ -25,7 +25,7 @@ class ActionLinks extends Consumer {
 	 */
 	public function onWpPluginActionLinks( $aActionLinks ) {
 
-		$aLinksToAdd = $this->getSpec()->getActionLinks( 'add' );
+		$aLinksToAdd = $this->getConfig()->getActionLinks( 'add' );
 
 		if ( !empty( $aLinksToAdd ) && is_array( $aLinksToAdd ) ) {
 

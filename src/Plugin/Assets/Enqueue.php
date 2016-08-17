@@ -37,7 +37,7 @@ class Enqueue extends Consumer{
 
 		} */
 
-		$oSpec = $this->getSpec();
+		$oSpec = $this->getConfig();
 		$aAdminJs = $oSpec->getInclude( 'plugin_admin' );
 		if ( isset( $aAdminJs['js'] ) && !empty( $aAdminJs['js'] ) && is_array( $aAdminJs['js'] ) ) {
 			$sDependent = false;
@@ -55,7 +55,7 @@ class Enqueue extends Consumer{
 
 	public function onWpEnqueueAdminCss() {
 
-		$oSpec = $this->getSpec();
+		$oSpec = $this->getConfig();
 		$aAdminCss = $oSpec->getInclude( 'admin' );
 		if ( isset( $aAdminCss['css'] ) && !empty( $aAdminCss['css'] ) && is_array( $aAdminCss['css'] ) ) {
 			$sDependent = false;
@@ -89,7 +89,7 @@ class Enqueue extends Consumer{
 
 	public function onWpEnqueueFrontendCss() {
 
-		$oSpec = $this->getSpec();
+		$oSpec = $this->getConfig();
 		$aFrontendIncludes = $oSpec->getInclude( 'frontend' );
 		if ( isset( $aFrontendIncludes['css'] ) && !empty( $aFrontendIncludes['css'] ) && is_array( $aFrontendIncludes['css'] ) ) {
 			foreach( $aFrontendIncludes['css'] as $sCssAsset ) {

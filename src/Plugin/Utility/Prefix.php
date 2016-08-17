@@ -40,6 +40,6 @@ class Prefix extends Consumer {
 	 * @return string
 	 */
 	public function getPluginPrefix( $sGlue = '-' ) {
-		return sprintf( '%s%s%s', $this->getSpec()->getParentSlug(), $sGlue, $this->getSpec()->getPluginSlug() );
+		return sprintf( '%s%s%s', $this->getConfig()->getParentSlug(), $sGlue, $this->getConfig()->getPluginSlug() );
 	}
 }

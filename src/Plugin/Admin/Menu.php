@@ -49,7 +49,7 @@ class Menu extends Consumer {
 	 */
 	protected function createPluginMenu() {
 
-		$oSpec = $this->getSpec();
+		$oSpec = $this->getConfig();
 
 		$bHideMenu = apply_filters( $this->oPrefix->doPluginPrefix( 'filter_hidePluginMenu' ), !$oSpec->getMenuSpec( 'show' ) );
 		if ( $bHideMenu ) {
@@ -68,14 +68,14 @@ class Menu extends Consumer {
 
 			// Because only plugin-relative paths, or absolute URLs are accepted
 			if ( !preg_match( '#^(http(s)?:)?//#', $sIconUrl ) ) {
-				$this->getPluginUrl_Image( $sIconUrl );
+				$this->getConfig()->getPluginUrl_Image( $sIconUrl );
 			}
 
 			$sFullParentMenuId = $this->oPrefix->getPluginPrefix();
 			add_menu_page(
-				$this->getHumanName(),
+				$this->oLabels->getHumanName(),
 				$sMenuTitle,
-				$this->getSpec()->getBasePermissions(),
+				$this->getConfig()->getBasePermissions(),
 				$sFullParentMenuId,
 				array( $this, $oSpec->getMenuSpec( 'callback' ) ),
 				$sIconUrl
@@ -91,7 +91,7 @@ class Menu extends Consumer {
 							$sFullParentMenuId,
 							$sMenuTitle,
 							$sMenuItemText,
-							$this->getSpec()->getBasePermissions(),
+							$this->getConfig()->getBasePermissions(),
 							$sMenuItemId,
 							$aMenuCallBack
 						);

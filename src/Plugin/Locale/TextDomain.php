@@ -13,7 +13,7 @@ class TextDomain extends Consumer {
 	 */
 	public function loadTextDomain( DerivedPaths $oPluginPaths ) {
 		return load_plugin_textdomain(
-			$this->getSpec()->getTextDomain(),
+			$this->getConfig()->getTextDomain(),
 			false,
 			plugin_basename( $oPluginPaths->getPath_Languages() )
 		);

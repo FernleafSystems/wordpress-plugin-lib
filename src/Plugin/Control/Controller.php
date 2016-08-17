@@ -123,7 +123,7 @@ class Controller {
 			new Hide( $this->config(), $this->getPluginPrefix(), $this->getRootFile() );
 			new ActionLinks( $this->config(), $this->getRootFile() );
 			new RowMeta( $this->config(), $this->getRootFile() );
-			new UpdateMessage( $this->config(), $this->getPluginPrefix(), $this->getRootFile() );
+			new UpdateMessage( $this->config(), $this->getPluginPrefix(), $this->getLabels(), $this->getRootFile() );
 		}
 	}
 
