@@ -11,11 +11,11 @@ class ActionLinks extends Consumer {
 	/**
 	 * ActionLinks constructor.
 	 *
-	 * @param Configuration $oSpec
+	 * @param Configuration $oConfig
 	 * @param RootFile      $oRoot
 	 */
-	public function __construct( $oSpec, $oRoot ) {
-		parent::__construct( $oSpec );
+	public function __construct( $oConfig, $oRoot ) {
+		parent::__construct( $oConfig );
 		add_filter( 'plugin_action_links_'.$oRoot->getPluginBaseFile(), array( $this, 'onWpPluginActionLinks' ), 50, 1 );
 	}
 

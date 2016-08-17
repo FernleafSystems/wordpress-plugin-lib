@@ -25,12 +25,12 @@ class Labels extends Consumer {
 	protected $aFinalLabels;
 
 	/**
+	 * @param Configuration $oConfig
 	 * @param RootFile      $oRootFile
 	 * @param Prefix        $oPrefix
-	 * @param Configuration $oSpec
 	 */
-	public function __construct( $oSpec, $oRootFile, $oPrefix ) {
-		parent::__construct( $oSpec );
+	public function __construct( $oConfig, $oRootFile, $oPrefix ) {
+		parent::__construct( $oConfig );
 		$this->oPrefix = $oPrefix;
 		$this->oRootFile = $oRootFile;
 	}

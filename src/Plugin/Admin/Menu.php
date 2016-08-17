@@ -24,10 +24,10 @@ class Menu extends Consumer {
 	 *
 	 * @param Labels        $oLabels
 	 * @param Prefix        $oPrefix
-	 * @param Configuration $oSpec
+	 * @param Configuration $oConfig
 	 */
-	public function __construct( $oSpec, $oLabels, $oPrefix ) {
-		parent::__construct( $oSpec );
+	public function __construct( $oConfig, $oLabels, $oPrefix ) {
+		parent::__construct( $oConfig );
 		$this->oPrefix = $oPrefix;
 		$this->oLabels = $oLabels;
 	}

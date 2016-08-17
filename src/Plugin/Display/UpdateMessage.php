@@ -21,13 +21,13 @@ class UpdateMessage extends Consumer {
 	/**
 	 * UpdateMessage constructor.
 	 *
-	 * @param Configuration $oSpec
+	 * @param Configuration $oConfig
 	 * @param Prefix $oPrefix
 	 * @param Labels $oLabels
 	 * @param RootFile $oRoot
 	 */
-	public function __construct( $oSpec, $oPrefix, $oLabels, $oRoot ) {
-		parent::__construct( $oSpec );
+	public function __construct( $oConfig, $oPrefix, $oLabels, $oRoot ) {
+		parent::__construct( $oConfig );
 		$this->oPrefix = $oPrefix;
 		add_action( 'in_plugin_update_message-'.$oRoot->getPluginBaseFile(), array( $this, 'onWpPluginUpdateMessage' ) );
 	}

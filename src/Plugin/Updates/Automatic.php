@@ -17,11 +17,11 @@ class Automatic extends Consumer {
 	/**
 	 * ActionLinks constructor.
 	 *
-	 * @param Configuration $oSpec
+	 * @param Configuration $oConfig
 	 * @param RootFile      $oRoot
 	 */
-	public function __construct( $oSpec, $oRoot ) {
-		parent::__construct( $oSpec );
+	public function __construct( $oConfig, $oRoot ) {
+		parent::__construct( $oConfig );
 		$this->oRootFile = $oRoot;
 		add_filter( 'auto_update_plugin', array( $this, 'onWpAutoUpdate' ), 10001, 2 );
 		add_filter( 'set_site_transient_update_plugins', array( $this, 'setUpdateFirstDetectedAt' ) );

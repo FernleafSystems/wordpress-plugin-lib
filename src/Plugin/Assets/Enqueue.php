@@ -14,12 +14,12 @@ class Enqueue extends Consumer{
 	protected $oPluginPaths;
 
 	/**
-	 * @param Configuration $oSpec
+	 * @param Configuration $oConfig
 	 * @param Prefix        $oPrefix
 	 * @param PluginPaths   $oPluginPaths
 	 */
-	public function __construct( $oSpec, $oPrefix, $oPluginPaths ) {
-		parent::__construct( $oSpec );
+	public function __construct( $oConfig, $oPrefix, $oPluginPaths ) {
+		parent::__construct( $oConfig );
 		$this->oPrefix = $oPrefix;
 		$this->oPluginPaths = $oPluginPaths;
 		$this->init();

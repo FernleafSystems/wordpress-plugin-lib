@@ -20,10 +20,14 @@ class Hide extends Consumer {
 	private $oRootFile;
 
 	/**
-	 * @param Configuration $oSpec
+	 * Hide constructor.
+	 *
+	 * @param Configuration $oConfig
+	 * @param Prefix $oPrefix
+	 * @param RootFile $oRoot
 	 */
-	public function __construct( $oSpec, $oPrefix, $oRoot ) {
-		parent::__construct( $oSpec );
+	public function __construct( $oConfig, $oPrefix, $oRoot ) {
+		parent::__construct( $oConfig );
 		$this->oRootFile = $oRoot;
 		$this->oPrefix = $oPrefix;
 		add_filter( 'all_plugins', array( $this, 'hidePluginFromTableList' ) );

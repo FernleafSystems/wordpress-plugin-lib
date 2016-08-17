@@ -14,13 +14,11 @@ class RowMeta extends Consumer {
 	private $oRootFile;
 
 	/**
-	 * ActionLinks constructor.
-	 *
-	 * @param Configuration $oSpec
+	 * @param Configuration $oConfig
 	 * @param RootFile      $oRoot
 	 */
-	public function __construct( $oSpec, $oRoot ) {
-		parent::__construct( $oSpec );
+	public function __construct( $oConfig, $oRoot ) {
+		parent::__construct( $oConfig );
 		$this->oRootFile = $oRoot;
 		add_filter( 'plugin_row_meta', array( $this, 'onPluginRowMeta' ), 50, 2 );
 	}
