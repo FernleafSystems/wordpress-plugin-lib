@@ -23,15 +23,12 @@ class Verify {
 		else if ( !is_null( $oCurrentConfig->getFileHash() ) ) {
 			$bRebuild = ( $oCurrentConfig->getFileHash() != $sSpecFileHash );
 		}
-		else if ( $oCurrentConfig->getModTime() > 0 ) {
+		else if ( $sSpecFileModTime > $oCurrentConfig->getModTime() ) {
 			$bRebuild = true;
 		}
 		else {
 			$bRebuild = $bRebuildFlagFile;
 		}
-
-		$oCurrentConfig->setFileHash( $sSpecFileHash );
-		$oCurrentConfig->setModTime( $sSpecFileModTime );
 		return !(bool)$bRebuild;
 	}
 }

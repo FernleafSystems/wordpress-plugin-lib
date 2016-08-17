@@ -3,7 +3,7 @@
 namespace Fernleaf\Wordpress\Plugin\Control;
 
 use Fernleaf\Wordpress\Plugin\Admin\Menu;
-use Fernleaf\Wordpress\Plugin\Config\Definition\Build;
+use Fernleaf\Wordpress\Plugin\Config\Build;
 use Fernleaf\Wordpress\Plugin\Config\Verify;
 use Fernleaf\Wordpress\Plugin\Config\Configuration;
 use Fernleaf\Wordpress\Plugin\Labels\ActionLinks;
@@ -28,7 +28,7 @@ class Controller {
 	/**
 	 * @var \Fernleaf\Wordpress\Plugin\Config\Configuration
 	 */
-	private $oSpec;
+	private $oConfig;
 
 	/**
 	 * @var \Pimple\Container
@@ -385,18 +385,18 @@ class Controller {
 	 */
 	public function spec() {
 
-		if ( !isset( $this->oSpec ) || !$this->oSpec->hasDefinition() ) {
+		if ( !isset( $this->oConfig ) || !$this->oConfig->hasDefinition() ) {
 			$sPathToSpec = $this->getPathPluginSpec();
 
-			$oSpecCache = Services::WpGeneral()->getOption( $this->getPluginControllerOptionsKey() );
-			$this->oSpec = new Configuration( $oSpecCache );
-			$bRebuild = Verify::IsRebuildRequired( $this->oSpec, $sPathToSpec );
+			$oDefinition = Services::WpGeneral()->getOption( $this->getPluginControllerOptionsKey() );
+			$this->oConfig = new Configuration( $oDefinition );
+			$bRebuild = Verify::IsRebuildRequired( $this->oConfig, $sPathToSpec );
 
 			if ( $bRebuild ) {
-				$this->oSpec->setDefinition( Build::FromFile( $sPathToSpec ) );
+				$this->oConfig = Build::FromFile( $sPathToSpec );
 			}
 		}
-		return $this->oSpec;
+		return $this->oConfig;
 	}
 
 	/**
