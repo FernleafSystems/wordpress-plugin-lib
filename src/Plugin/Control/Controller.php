@@ -3,7 +3,9 @@
 namespace Fernleaf\Wordpress\Plugin\Control;
 
 use Fernleaf\Wordpress\Plugin\Admin\Menu;
-use Fernleaf\Wordpress\Plugin\Config\Reader;
+use Fernleaf\Wordpress\Plugin\Config\Definition\Build;
+use Fernleaf\Wordpress\Plugin\Config\Verify;
+use Fernleaf\Wordpress\Plugin\Config\Configuration;
 use Fernleaf\Wordpress\Plugin\Labels\ActionLinks;
 use Fernleaf\Wordpress\Plugin\Labels\Hide;
 use Fernleaf\Wordpress\Plugin\Labels\Labels;
@@ -24,9 +26,9 @@ use Pimple\Container;
 class Controller {
 
 	/**
-	 * @var \Fernleaf\Wordpress\Plugin\Config\Specification
+	 * @var \Fernleaf\Wordpress\Plugin\Config\Configuration
 	 */
-	static private $oSpec;
+	private $oSpec;
 
 	/**
 	 * @var \Pimple\Container
@@ -285,7 +287,7 @@ class Controller {
 		);
 
 		// NEW: We inject the optionsVO into the constructor instead of relying on the Handler to create the optionsVo.
-		$sPathToYamlConfig = $this->getPluginPaths()->getPath_ModuleConfig( $sFeatureSlug );
+		$sPathToYamlConfig = $this->getPluginPaths()->getPath_Config( $sFeatureSlug );
 		$oOptionsVo = new OptionsVo( new ConfigVo( $sPathToYamlConfig ) );
 		if ( $bRecreate || !isset( $this->{$sOptionsVarName} ) ) {
 			$this->{$sOptionsVarName} = new $sClassName(
@@ -310,19 +312,12 @@ class Controller {
 	 * @param bool $bDelete
 	 */
 	protected function saveCurrentPluginControllerOptions( $bDelete = false ) {
-		$aOptions = $bDelete ? array() : $this->spec()->getSpec();
+		$aOptions = $bDelete ? array() : $this->spec()->getDefinition();
 		if ( $this->sConfigOptionsHashWhenLoaded != md5( serialize( $aOptions ) ) ) {
 			add_filter( $this->getPluginPrefix()->doPluginPrefix( 'bypass_permission_to_manage' ), '__return_true' );
 			Services::WpGeneral()->updateOption( $this->getPluginControllerOptionsKey(), $aOptions );
 			remove_filter( $this->getPluginPrefix()->doPluginPrefix( 'bypass_permission_to_manage' ), '__return_true' );
 		}
-	}
-
-	/**
-	 * @return string
-	 */
-	private function getPluginControllerOptionsKey() {
-		return strtolower( get_class() );
 	}
 
 	/**
@@ -386,33 +381,36 @@ class Controller {
 	}
 
 	/**
-	 * @return \Fernleaf\Wordpress\Plugin\Config\Specification
+	 * @return \Fernleaf\Wordpress\Plugin\Config\Configuration
 	 */
 	public function spec() {
 
-		if ( !isset( self::$oSpec ) ) {
-			$sPathToConfig = $this->getPathPluginSpec();
-			$aSpecCache = $this->loadWpFunctionsProcessor()->getOption( $this->getPluginControllerOptionsKey() );
-			if ( empty( $aSpecCache ) || !is_array( $aSpecCache )
-				|| ( isset( $aSpecCache['rebuild_time'] ) ? ( $this->loadFileSystemProcessor()->getModifiedTime( $this->getPathPluginSpec() ) > $aSpecCache['rebuild_time'] ) : true ) ) {
+		if ( !isset( $this->oSpec ) || !$this->oSpec->hasDefinition() ) {
+			$sPathToSpec = $this->getPathPluginSpec();
 
-				$aSpecCache = Reader::Read( $sPathToConfig );
-			}
+			$oSpecCache = Services::WpGeneral()->getOption( $this->getPluginControllerOptionsKey() );
+			$this->oSpec = new Configuration( $oSpecCache );
+			$bRebuild = Verify::IsRebuildRequired( $this->oSpec, $sPathToSpec );
 
-			// Used at the time of saving during WP Shutdown to determine whether saving is necessary. TODO: Extend to plugin options
-			if ( empty( $this->sConfigOptionsHashWhenLoaded ) ) {
-				$this->sConfigOptionsHashWhenLoaded = md5( serialize( $aSpecCache ) );
+			if ( $bRebuild ) {
+				$this->oSpec->setDefinition( Build::FromFile( $sPathToSpec ) );
 			}
-			self::$oSpec = ( new \Fernleaf\Wordpress\Plugin\Config\Specification( $aSpecCache ) );
 		}
-		return self::$oSpec;
+		return $this->oSpec;
 	}
 
 	/**
 	 * @return string
 	 */
 	private function getPathPluginSpec() {
-		return $this->getPluginPaths()->getPath_Root( 'plugin-spec.php' );
+		return $this->getPluginPaths()->getPath_Config( 'plugin-spec.php' );
+	}
+
+	/**
+	 * @return string
+	 */
+	private function getPluginControllerOptionsKey() {
+		return strtolower( get_class() );
 	}
 
 }

@@ -2,9 +2,9 @@
 
 namespace Fernleaf\Wordpress\Plugin\Utility;
 
-use Fernleaf\Wordpress\Plugin\Config\SpecConsumer;
+use Fernleaf\Wordpress\Plugin\Config\Consumer;
 
-class Prefix extends SpecConsumer {
+class Prefix extends Consumer {
 
 	/**
 	 * @param string $sSuffix

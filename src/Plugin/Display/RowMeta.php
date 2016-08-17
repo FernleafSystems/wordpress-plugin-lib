@@ -2,11 +2,11 @@
 
 namespace Fernleaf\Wordpress\Plugin\Labels;
 
-use Fernleaf\Wordpress\Plugin\Config\SpecConsumer;
-use Fernleaf\Wordpress\Plugin\Config\Specification;
+use Fernleaf\Wordpress\Plugin\Config\Consumer;
+use Fernleaf\Wordpress\Plugin\Config\Configuration;
 use Fernleaf\Wordpress\Plugin\Root\File as RootFile;
 
-class RowMeta extends SpecConsumer {
+class RowMeta extends Consumer {
 
 	/**
 	 * @var RootFile
@@ -16,8 +16,8 @@ class RowMeta extends SpecConsumer {
 	/**
 	 * ActionLinks constructor.
 	 *
-	 * @param Specification $oSpec
-	 * @param RootFile $oRoot
+	 * @param Configuration $oSpec
+	 * @param RootFile      $oRoot
 	 */
 	public function __construct( $oSpec, $oRoot ) {
 		parent::__construct( $oSpec );

@@ -2,21 +2,21 @@
 
 namespace Fernleaf\Wordpress\Plugin\Assets;
 
-use Fernleaf\Wordpress\Plugin\Config\SpecConsumer;
-use Fernleaf\Wordpress\Plugin\Config\Specification;
+use Fernleaf\Wordpress\Plugin\Config\Consumer;
+use Fernleaf\Wordpress\Plugin\Config\Configuration;
 use Fernleaf\Wordpress\Plugin\Paths\Derived as PluginPaths;
 use Fernleaf\Wordpress\Plugin\Utility\Prefix;
 
-class Enqueue extends SpecConsumer{
+class Enqueue extends Consumer{
 
 	protected $oPrefix;
 
 	protected $oPluginPaths;
 
 	/**
-	 * @param Specification $oSpec
-	 * @param Prefix $oPrefix
-	 * @param PluginPaths $oPluginPaths
+	 * @param Configuration $oSpec
+	 * @param Prefix        $oPrefix
+	 * @param PluginPaths   $oPluginPaths
 	 */
 	public function __construct( $oSpec, $oPrefix, $oPluginPaths ) {
 		parent::__construct( $oSpec );

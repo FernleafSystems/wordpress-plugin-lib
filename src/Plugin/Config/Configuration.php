@@ -2,28 +2,74 @@
 
 namespace Fernleaf\Wordpress\Plugin\Config;
 
-class Specification {
+class Configuration {
 
 	/**
-	 * @var array
+	 * @var \stdClass
 	 */
-	static private $aSpec;
+	private $oDefinition;
 
 	/**
-	 * @param array $aSpec
+	 * @param \stdClass $oDefinition
 	 */
-	public function __construct( $aSpec ) {
-		if ( !isset( $aSpec['update_first_detected'] ) || !is_array( $aSpec['update_first_detected'] ) ) {
-			$aSpec[ 'update_first_detected' ] = array();
-		}
-		self::$aSpec = $aSpec;
+	public function __construct( $oDefinition = null ) {
+		$this->oDefinition = $oDefinition;
 	}
 
 	/**
-	 * @return array
+	 * @return \stdClass
 	 */
-	public function getSpec() {
-		return self::$aSpec;
+	public function getDefinition() {
+		return $this->oDefinition;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function hasDefinition() {
+		return !empty( $this->oDefinition->plugin_spec );
+	}
+
+	/**
+	 * @return null|string
+	 */
+	public function getFileHash() {
+		$sHash = isset( $this->oDefinition->filehash ) ? $this->oDefinition->filehash : null;
+		return ( is_string( $sHash ) && strlen( $sHash ) == 32 ) ? $sHash : null;
+	}
+
+	/**
+	 * @return null|string
+	 */
+	public function getModTime() {
+		return ( isset( $this->oDefinition->mod_time ) && $this->oDefinition->mod_time > 0 ) ? $this->oDefinition->mod_time : 0;
+	}
+
+	/**
+	 * @param int $nTime
+	 * @return $this
+	 */
+	public function setModTime( $nTime ) {
+		$this->oDefinition->mod_time = $nTime;
+		return $this;
+	}
+
+	/**
+	 * @param string $sHash
+	 * @return $this
+	 */
+	public function setFileHash( $sHash ) {
+		$this->oDefinition->hash = $sHash;
+		return $this;
+	}
+
+	/**
+	 * @param \stdClass $oDefinition
+	 * @return Configuration
+	 */
+	public function setDefinition( $oDefinition ) {
+		$this->oDefinition = $oDefinition;
+		return $this;
 	}
 
 	/**
@@ -158,7 +204,7 @@ class Specification {
 	 * @return int
 	 */
 	public function getUpdateFirstDetected( $sVersion ) {
-		return ( self::$aSpec['update_first_detected'][ $sVersion ] ) ? self::$aSpec['update_first_detected'][ $sVersion ] : 0;
+		return isset( $this->oDefinition->update_first_detected[ $sVersion ] ) ? $this->oDefinition['update_first_detected'][ $sVersion ] : 0;
 	}
 
 	/**
@@ -167,10 +213,10 @@ class Specification {
 	 * @return $this
 	 */
 	public function setUpdateFirstDetected( $sVersion, $nTime ) {
-		if ( count( self::$aSpec[ 'update_first_detected' ] ) > 3 ) {
-			self::$aSpec[ 'update_first_detected' ] = array();
+		if ( !is_array( $this->oDefinition->update_first_detected ) || count( $this->oDefinition->update_first_detected ) > 3 ) {
+			$this->oDefinition->update_first_detected = array();
 		}
-		self::$aSpec[ 'update_first_detected' ][ $sVersion ] = $nTime;
+		$this->oDefinition->update_first_detected[ $sVersion ] = $nTime;
 		return $this;
 	}
 
@@ -188,9 +234,9 @@ class Specification {
 	 */
 	protected function get( $sParentCategory, $sKey = '' ) {
 		if ( empty( $sKey ) ) {
-			return isset( self::$aSpec[ $sParentCategory ] ) ? self::$aSpec[ $sParentCategory ] : null;
+			return isset( $this->oDefinition->plugin_spec[ $sParentCategory ] ) ? $this->oDefinition->plugin_spec[ $sParentCategory ] : null;
 		}
-		return isset( self::$aSpec[ $sParentCategory ][ $sKey ] ) ? self::$aSpec[ $sParentCategory ][ $sKey ] : null;
+		return isset( $this->oDefinition->plugin_spec[ $sParentCategory ][ $sKey ] ) ? $this->oDefinition->plugin_spec[ $sParentCategory ][ $sKey ] : null;
 	}
 
 }

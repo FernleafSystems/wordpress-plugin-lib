@@ -2,10 +2,10 @@
 
 namespace Fernleaf\Wordpress\Plugin\Locale;
 
-use Fernleaf\Wordpress\Plugin\Config\SpecConsumer;
+use Fernleaf\Wordpress\Plugin\Config\Consumer;
 use Fernleaf\Wordpress\Plugin\Paths\Derived as DerivedPaths;
 
-class TextDomain extends SpecConsumer {
+class TextDomain extends Consumer {
 
 	/**
 	 * @param DerivedPaths $oPluginPaths

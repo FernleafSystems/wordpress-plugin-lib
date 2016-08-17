@@ -66,8 +66,8 @@ class Derived {
 	 * @param string $sModuleSlug
 	 * @return string
 	 */
-	public function getPath_ModuleConfig( $sModuleSlug ) {
-		$sPath = $this->getPluginPath( 'modules', $sModuleSlug );
+	public function getPath_Config( $sModuleSlug ) {
+		$sPath = $this->getPluginPath( 'config', $sModuleSlug );
 		return $this->getAbsolutePath( $sPath );
 	}
 

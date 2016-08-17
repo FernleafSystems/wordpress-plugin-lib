@@ -2,12 +2,12 @@
 
 namespace Fernleaf\Wordpress\Plugin\Labels;
 
-use Fernleaf\Wordpress\Plugin\Config\SpecConsumer;
-use Fernleaf\Wordpress\Plugin\Config\Specification;
+use Fernleaf\Wordpress\Plugin\Config\Consumer;
+use Fernleaf\Wordpress\Plugin\Config\Configuration;
 use Fernleaf\Wordpress\Plugin\Root\File as RootFile;
 use Fernleaf\Wordpress\Plugin\Utility\Prefix;
 
-class Hide extends SpecConsumer {
+class Hide extends Consumer {
 
 	/**
 	 * @var Prefix
@@ -20,7 +20,7 @@ class Hide extends SpecConsumer {
 	private $oRootFile;
 
 	/**
-	 * @param Specification $oSpec
+	 * @param Configuration $oSpec
 	 */
 	public function __construct( $oSpec, $oPrefix, $oRoot ) {
 		parent::__construct( $oSpec );

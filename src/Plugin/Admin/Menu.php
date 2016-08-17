@@ -2,12 +2,12 @@
 
 namespace Fernleaf\Wordpress\Plugin\Admin;
 
-use Fernleaf\Wordpress\Plugin\Config\SpecConsumer;
-use Fernleaf\Wordpress\Plugin\Config\Specification;
+use Fernleaf\Wordpress\Plugin\Config\Consumer;
+use Fernleaf\Wordpress\Plugin\Config\Configuration;
 use Fernleaf\Wordpress\Plugin\Labels\Labels;
 use Fernleaf\Wordpress\Plugin\Utility\Prefix;
 
-class Menu extends SpecConsumer {
+class Menu extends Consumer {
 
 	/**
 	 * @var Prefix
@@ -22,9 +22,9 @@ class Menu extends SpecConsumer {
 	/**
 	 * Labels constructor.
 	 *
-	 * @param Labels $oLabels
-	 * @param Prefix $oPrefix
-	 * @param Specification $oSpec
+	 * @param Labels        $oLabels
+	 * @param Prefix        $oPrefix
+	 * @param Configuration $oSpec
 	 */
 	public function __construct( $oSpec, $oLabels, $oPrefix ) {
 		parent::__construct( $oSpec );

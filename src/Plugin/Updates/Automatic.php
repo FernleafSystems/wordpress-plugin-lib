@@ -2,12 +2,12 @@
 
 namespace Fernleaf\Wordpress\Plugin\Updates;
 
-use Fernleaf\Wordpress\Plugin\Config\SpecConsumer;
-use Fernleaf\Wordpress\Plugin\Config\Specification;
+use Fernleaf\Wordpress\Plugin\Config\Consumer;
+use Fernleaf\Wordpress\Plugin\Config\Configuration;
 use Fernleaf\Wordpress\Plugin\Root\File as RootFile;
 use Fernleaf\Wordpress\Services;
 
-class Automatic extends SpecConsumer {
+class Automatic extends Consumer {
 
 	/**
 	 * @var RootFile
@@ -17,8 +17,8 @@ class Automatic extends SpecConsumer {
 	/**
 	 * ActionLinks constructor.
 	 *
-	 * @param Specification $oSpec
-	 * @param RootFile $oRoot
+	 * @param Configuration $oSpec
+	 * @param RootFile      $oRoot
 	 */
 	public function __construct( $oSpec, $oRoot ) {
 		parent::__construct( $oSpec );

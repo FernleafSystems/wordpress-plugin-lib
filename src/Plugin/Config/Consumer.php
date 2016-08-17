@@ -2,15 +2,15 @@
 
 namespace Fernleaf\Wordpress\Plugin\Config;
 
-class SpecConsumer {
+class Consumer {
 
 	/**
-	 * @var Specification
+	 * @var Configuration
 	 */
 	private $oSpec;
 
 	/**
-	 * @param Specification $oSpec
+	 * @param Configuration $oSpec
 	 * @throws \Exception
 	 */
 	public function __construct( $oSpec = null ) {
@@ -28,7 +28,7 @@ class SpecConsumer {
 	protected function init() {}
 
 	/**
-	 * @return Specification
+	 * @return Configuration
 	 */
 	protected function getSpec() {
 		return $this->oSpec;

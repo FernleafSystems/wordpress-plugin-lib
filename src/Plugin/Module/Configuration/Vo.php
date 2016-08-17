@@ -2,7 +2,7 @@
 
 namespace Fernleaf\Wordpress\Plugin\Module\Configuration;
 
-use Fernleaf\Wordpress\Plugin\Config\Reader;
+use Fernleaf\Wordpress\Plugin\Config\Definition\Read;
 use Fernleaf\Wordpress\Services;
 
 class Vo {
@@ -244,7 +244,7 @@ class Vo {
 		$aConfig = $oWp->getTransient( $sTransientKey );
 
 		if ( $this->getRebuildFromFile() || empty( $aConfig ) ) {
-			$aConfig = Reader::Read( $this->getPathToYamlConfig() );
+			$aConfig = Read::FromFile( $this->getPathToYamlConfig() );
 			if ( is_null( $aConfig ) ) {
 				throw new \Exception( 'YAML parser could not load to process the options configuration.' );
 			}

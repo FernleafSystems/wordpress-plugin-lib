@@ -2,12 +2,12 @@
 
 namespace Fernleaf\Wordpress\Plugin\Labels;
 
-use Fernleaf\Wordpress\Plugin\Config\SpecConsumer;
-use Fernleaf\Wordpress\Plugin\Config\Specification;
+use Fernleaf\Wordpress\Plugin\Config\Consumer;
+use Fernleaf\Wordpress\Plugin\Config\Configuration;
 use Fernleaf\Wordpress\Plugin\Root\File as RootFile;
 use Fernleaf\Wordpress\Plugin\Utility\Prefix;
 
-class UpdateMessage extends SpecConsumer {
+class UpdateMessage extends Consumer {
 
 	/**
 	 * @var Prefix
@@ -15,9 +15,9 @@ class UpdateMessage extends SpecConsumer {
 	private $oPrefix;
 
 	/**
-	 * @param Specification $oSpec
-	 * @param Prefix $oPrefix
-	 * @param RootFile $oRoot
+	 * @param Configuration $oSpec
+	 * @param Prefix        $oPrefix
+	 * @param RootFile      $oRoot
 	 */
 	public function __construct( $oSpec, $oPrefix, $oRoot ) {
 		parent::__construct( $oSpec );
