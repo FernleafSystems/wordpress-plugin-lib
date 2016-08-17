@@ -1,6 +1,6 @@
 <?php
 
-namespace Fernleaf\Wordpress\Plugin\Labels;
+namespace Fernleaf\Wordpress\Plugin\Display;
 
 use Fernleaf\Wordpress\Plugin\Config\Consumer;
 use Fernleaf\Wordpress\Plugin\Config\Configuration;

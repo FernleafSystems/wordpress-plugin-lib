@@ -4,7 +4,7 @@ namespace Fernleaf\Wordpress\Plugin\Admin;
 
 use Fernleaf\Wordpress\Plugin\Config\Consumer;
 use Fernleaf\Wordpress\Plugin\Config\Configuration;
-use Fernleaf\Wordpress\Plugin\Labels\Labels;
+use Fernleaf\Wordpress\Plugin\Display\Labels;
 use Fernleaf\Wordpress\Plugin\Utility\Prefix;
 
 class Menu extends Consumer {
