@@ -1,6 +1,6 @@
 <?php
 
-namespace Fernleaf\Wordpress\Plugin\Config\Definition;
+namespace Fernleaf\Wordpress\Plugin\Configuration\Definition;
 
 class Build {
 	/**
@@ -9,7 +9,7 @@ class Build {
 	 */
 	static public function FromFile( $sPathToDefinitionYamlFile ) {
 		$oDef = new \stdClass();
-		$oDef->plugin_spec = Read::FromFile( $sPathToDefinitionYamlFile );
+		$oDef->def = Read::FromFile( $sPathToDefinitionYamlFile );
 		return $oDef;
 	}
 }

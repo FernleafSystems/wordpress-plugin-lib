@@ -1,16 +1,16 @@
 <?php
 
-namespace Fernleaf\Wordpress\Plugin\Config;
+namespace Fernleaf\Wordpress\Plugin\Configuration;
 
 class Consumer {
 
 	/**
-	 * @var Configuration
+	 * @var Controller
 	 */
 	private $oConfig;
 
 	/**
-	 * @param Configuration $oConfig
+	 * @param Controller $oConfig
 	 * @throws \Exception
 	 */
 	public function __construct( $oConfig = null ) {
@@ -28,7 +28,7 @@ class Consumer {
 	protected function init() {}
 
 	/**
-	 * @return Configuration
+	 * @return Controller
 	 */
 	protected function getConfig() {
 		return $this->oConfig;

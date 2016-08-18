@@ -1,16 +1,16 @@
 <?php
 
-namespace Fernleaf\Wordpress\Plugin\Config\Operations;
+namespace Fernleaf\Wordpress\Plugin\Configuration\Operations;
 
-use Fernleaf\Wordpress\Plugin\Config\Configuration;
+use Fernleaf\Wordpress\Plugin\Configuration\Controller;
 use Fernleaf\Wordpress\Services;
 
 class Verify {
 
 	/**
-	 * @param Configuration $oCurrentConfig
-	 * @param string        $sPathToSpec
-	 * @param bool          $bRebuildFlagFile
+	 * @param Controller $oCurrentConfig
+	 * @param string     $sPathToSpec
+	 * @param bool       $bRebuildFlagFile
 	 * @return bool
 	 * @throws \Exception
 	 */

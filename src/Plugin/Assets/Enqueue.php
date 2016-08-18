@@ -2,8 +2,8 @@
 
 namespace Fernleaf\Wordpress\Plugin\Assets;
 
-use Fernleaf\Wordpress\Plugin\Config\Consumer;
-use Fernleaf\Wordpress\Plugin\Config\Configuration;
+use Fernleaf\Wordpress\Plugin\Configuration\Consumer;
+use Fernleaf\Wordpress\Plugin\Configuration\Controller;
 use Fernleaf\Wordpress\Plugin\Paths\Derived as PluginPaths;
 use Fernleaf\Wordpress\Plugin\Utility\Prefix;
 
@@ -14,9 +14,9 @@ class Enqueue extends Consumer{
 	protected $oPluginPaths;
 
 	/**
-	 * @param Configuration $oConfig
-	 * @param Prefix        $oPrefix
-	 * @param PluginPaths   $oPluginPaths
+	 * @param Controller  $oConfig
+	 * @param Prefix      $oPrefix
+	 * @param PluginPaths $oPluginPaths
 	 */
 	public function __construct( $oConfig, $oPrefix, $oPluginPaths ) {
 		parent::__construct( $oConfig );

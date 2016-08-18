@@ -2,8 +2,8 @@
 
 namespace Fernleaf\Wordpress\Plugin\Permission;
 
-use Fernleaf\Wordpress\Plugin\Config\Configuration;
-use Fernleaf\Wordpress\Plugin\Config\Consumer;
+use Fernleaf\Wordpress\Plugin\Configuration\Controller;
+use Fernleaf\Wordpress\Plugin\Configuration\Consumer;
 use Fernleaf\Wordpress\Plugin\Utility\Prefix;
 
 class Permissions extends Consumer {
@@ -19,8 +19,8 @@ class Permissions extends Consumer {
 	protected $oPrefix;
 
 	/**
-	 * @param Configuration $oConfig
-	 * @param Prefix $oPrefix
+	 * @param Controller $oConfig
+	 * @param Prefix     $oPrefix
 	 */
 	public function __construct( $oConfig, $oPrefix ) {
 		parent::__construct( $oConfig );

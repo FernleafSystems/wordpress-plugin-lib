@@ -3,10 +3,10 @@
 namespace Fernleaf\Wordpress\Plugin\Control;
 
 use Fernleaf\Wordpress\Plugin\Admin\Menu;
-use Fernleaf\Wordpress\Plugin\Config\Operations\Build;
-use Fernleaf\Wordpress\Plugin\Config\Operations\Save;
-use Fernleaf\Wordpress\Plugin\Config\Operations\Verify;
-use Fernleaf\Wordpress\Plugin\Config\Configuration;
+use Fernleaf\Wordpress\Plugin\Configuration\Operations\Build;
+use Fernleaf\Wordpress\Plugin\Configuration\Operations\Save;
+use Fernleaf\Wordpress\Plugin\Configuration\Operations\Verify;
+use Fernleaf\Wordpress\Plugin\Configuration\Controller;
 use Fernleaf\Wordpress\Plugin\Display\ActionLinks;
 use Fernleaf\Wordpress\Plugin\Display\Hide;
 use Fernleaf\Wordpress\Plugin\Display\Labels;
@@ -28,7 +28,7 @@ use Pimple\Container;
 class Controller {
 
 	/**
-	 * @var \Fernleaf\Wordpress\Plugin\Config\Configuration
+	 * @var \Fernleaf\Wordpress\Plugin\Configuration\Controller
 	 */
 	private $oConfig;
 
@@ -395,12 +395,12 @@ class Controller {
 	}
 
 	/**
-	 * @return \Fernleaf\Wordpress\Plugin\Config\Configuration
+	 * @return \Fernleaf\Wordpress\Plugin\Configuration\Controller
 	 */
 	public function config() {
 		if ( !isset( $this->oConfig ) || !$this->oConfig->hasDefinition() ) {
 			$oDefinition = Services::WpGeneral()->getOption( $this->getPluginControllerOptionsKey() );
-			$this->oConfig = new Configuration( $oDefinition );
+			$this->oConfig = new Controller( $oDefinition );
 			if ( Verify::IsRebuildRequired( $this->oConfig, $this->getPathPluginSpec() ) ) {
 				$this->oConfig = Build::FromFile( $this->getPathPluginSpec() );
 			}

@@ -2,8 +2,8 @@
 
 namespace Fernleaf\Wordpress\Plugin\Updates;
 
-use Fernleaf\Wordpress\Plugin\Config\Consumer;
-use Fernleaf\Wordpress\Plugin\Config\Configuration;
+use Fernleaf\Wordpress\Plugin\Configuration\Consumer;
+use Fernleaf\Wordpress\Plugin\Configuration\Controller;
 use Fernleaf\Wordpress\Plugin\Root\File as RootFile;
 use Fernleaf\Wordpress\Services;
 
@@ -17,8 +17,8 @@ class Automatic extends Consumer {
 	/**
 	 * ActionLinks constructor.
 	 *
-	 * @param Configuration $oConfig
-	 * @param RootFile      $oRoot
+	 * @param Controller $oConfig
+	 * @param RootFile   $oRoot
 	 */
 	public function __construct( $oConfig, $oRoot ) {
 		parent::__construct( $oConfig );

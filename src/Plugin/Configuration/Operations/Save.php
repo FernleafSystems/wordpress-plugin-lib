@@ -1,14 +1,14 @@
 <?php
 
-namespace Fernleaf\Wordpress\Plugin\Config\Operations;
+namespace Fernleaf\Wordpress\Plugin\Configuration\Operations;
 
-use Fernleaf\Wordpress\Plugin\Config\Configuration;
+use Fernleaf\Wordpress\Plugin\Configuration\Controller;
 use Fernleaf\Wordpress\Services;
 
 class Save {
 	/**
-	 * @param Configuration $oConfig
-	 * @param string $sOptionKey
+	 * @param Controller $oConfig
+	 * @param string     $sOptionKey
 	 * @return bool
 	 */
 	static public function ToWp( $oConfig, $sOptionKey ) {

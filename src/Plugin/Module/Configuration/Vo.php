@@ -2,7 +2,7 @@
 
 namespace Fernleaf\Wordpress\Plugin\Module\Configuration;
 
-use Fernleaf\Wordpress\Plugin\Config\Definition\Read;
+use Fernleaf\Wordpress\Plugin\Configuration\Definition\Read;
 use Fernleaf\Wordpress\Services;
 
 class Vo {

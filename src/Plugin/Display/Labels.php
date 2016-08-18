@@ -2,8 +2,8 @@
 
 namespace Fernleaf\Wordpress\Plugin\Display;
 
-use Fernleaf\Wordpress\Plugin\Config\Consumer;
-use Fernleaf\Wordpress\Plugin\Config\Configuration;
+use Fernleaf\Wordpress\Plugin\Configuration\Consumer;
+use Fernleaf\Wordpress\Plugin\Configuration\Controller;
 use Fernleaf\Wordpress\Plugin\Root\File as RootFile;
 use Fernleaf\Wordpress\Plugin\Utility\Prefix;
 
@@ -25,9 +25,9 @@ class Labels extends Consumer {
 	protected $aFinalLabels;
 
 	/**
-	 * @param Configuration $oConfig
-	 * @param RootFile      $oRootFile
-	 * @param Prefix        $oPrefix
+	 * @param Controller $oConfig
+	 * @param RootFile   $oRootFile
+	 * @param Prefix     $oPrefix
 	 */
 	public function __construct( $oConfig, $oRootFile, $oPrefix ) {
 		parent::__construct( $oConfig );

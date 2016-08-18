@@ -1,6 +1,6 @@
 <?php
 
-namespace Fernleaf\Wordpress\Plugin\Config\Definition;
+namespace Fernleaf\Wordpress\Plugin\Configuration\Definition;
 
 use Fernleaf\Wordpress\Services;
 use Symfony\Component\Yaml\Yaml;

@@ -2,8 +2,8 @@
 
 namespace Fernleaf\Wordpress\Plugin\Admin;
 
-use Fernleaf\Wordpress\Plugin\Config\Consumer;
-use Fernleaf\Wordpress\Plugin\Config\Configuration;
+use Fernleaf\Wordpress\Plugin\Configuration\Consumer;
+use Fernleaf\Wordpress\Plugin\Configuration\Controller;
 use Fernleaf\Wordpress\Plugin\Display\Labels;
 use Fernleaf\Wordpress\Plugin\Utility\Prefix;
 
@@ -22,9 +22,9 @@ class Menu extends Consumer {
 	/**
 	 * Labels constructor.
 	 *
-	 * @param Labels        $oLabels
-	 * @param Prefix        $oPrefix
-	 * @param Configuration $oConfig
+	 * @param Labels     $oLabels
+	 * @param Prefix     $oPrefix
+	 * @param Controller $oConfig
 	 */
 	public function __construct( $oConfig, $oLabels, $oPrefix ) {
 		parent::__construct( $oConfig );

@@ -2,7 +2,7 @@
 
 namespace Fernleaf\Wordpress\Plugin\Utility;
 
-use Fernleaf\Wordpress\Plugin\Config\Consumer;
+use Fernleaf\Wordpress\Plugin\Configuration\Consumer;
 
 class Prefix extends Consumer {
 

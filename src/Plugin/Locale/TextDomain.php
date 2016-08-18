@@ -2,7 +2,7 @@
 
 namespace Fernleaf\Wordpress\Plugin\Locale;
 
-use Fernleaf\Wordpress\Plugin\Config\Consumer;
+use Fernleaf\Wordpress\Plugin\Configuration\Consumer;
 use Fernleaf\Wordpress\Plugin\Paths\Derived as DerivedPaths;
 
 class TextDomain extends Consumer {
