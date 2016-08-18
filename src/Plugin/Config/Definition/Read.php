@@ -2,6 +2,7 @@
 
 namespace Fernleaf\Wordpress\Plugin\Config\Definition;
 
+use Fernleaf\Wordpress\Services;
 use Symfony\Component\Yaml\Yaml;
 
 class Read {
@@ -28,7 +29,7 @@ class Read {
 			if ( is_null( $aSpec ) ) {
 				throw new \Exception( 'YAML parser could not load to process the plugin spec configuration.' );
 			}
-			$aSpec[ 'rebuild_time' ] = time(); // TODO: use plugin request time
+			$aSpec[ 'rebuild_time' ] = Services::Data()->time();
 		}
 		return $aSpec;
 	}

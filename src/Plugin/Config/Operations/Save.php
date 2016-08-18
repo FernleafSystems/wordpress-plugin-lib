@@ -1,7 +1,8 @@
 <?php
 
-namespace Fernleaf\Wordpress\Plugin\Config;
+namespace Fernleaf\Wordpress\Plugin\Config\Operations;
 
+use Fernleaf\Wordpress\Plugin\Config\Configuration;
 use Fernleaf\Wordpress\Services;
 
 class Save {

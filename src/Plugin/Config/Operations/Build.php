@@ -1,7 +1,8 @@
 <?php
 
-namespace Fernleaf\Wordpress\Plugin\Config;
+namespace Fernleaf\Wordpress\Plugin\Config\Operations;
 
+use Fernleaf\Wordpress\Plugin\Config\Configuration;
 use Fernleaf\Wordpress\Services;
 
 class Build {
@@ -14,6 +15,6 @@ class Build {
 			\Fernleaf\Wordpress\Plugin\Config\Definition\Build::FromFile( $sPathToDefinitionYamlFile )
 		);
 		$oConfig->setModTime( Services::WpFs()->getModifiedTime( $sPathToDefinitionYamlFile ) );
-		$oConfig->setFileHash( @md5_file( $sPathToDefinitionYamlFile ) );
+		return $oConfig->setFileHash( @md5_file( $sPathToDefinitionYamlFile ) );
 	}
 }

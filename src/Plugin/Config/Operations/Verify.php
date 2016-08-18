@@ -1,7 +1,8 @@
 <?php
 
-namespace Fernleaf\Wordpress\Plugin\Config;
+namespace Fernleaf\Wordpress\Plugin\Config\Operations;
 
+use Fernleaf\Wordpress\Plugin\Config\Configuration;
 use Fernleaf\Wordpress\Services;
 
 class Verify {
@@ -29,6 +30,6 @@ class Verify {
 		else {
 			$bRebuild = $bRebuildFlagFile;
 		}
-		return !(bool)$bRebuild;
+		return (bool)$bRebuild;
 	}
 }

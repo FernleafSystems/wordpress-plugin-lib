@@ -3,9 +3,9 @@
 namespace Fernleaf\Wordpress\Plugin\Control;
 
 use Fernleaf\Wordpress\Plugin\Admin\Menu;
-use Fernleaf\Wordpress\Plugin\Config\Build;
-use Fernleaf\Wordpress\Plugin\Config\Save;
-use Fernleaf\Wordpress\Plugin\Config\Verify;
+use Fernleaf\Wordpress\Plugin\Config\Operations\Build;
+use Fernleaf\Wordpress\Plugin\Config\Operations\Save;
+use Fernleaf\Wordpress\Plugin\Config\Operations\Verify;
 use Fernleaf\Wordpress\Plugin\Config\Configuration;
 use Fernleaf\Wordpress\Plugin\Display\ActionLinks;
 use Fernleaf\Wordpress\Plugin\Display\Hide;

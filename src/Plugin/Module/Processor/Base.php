@@ -258,6 +258,6 @@ abstract class Base {
 	 * @return int
 	 */
 	protected function time() {
-		return $this->loadDataProcessor()->GetRequestTime();
+		return Services::Data()->GetRequestTime();
 	}
 }
