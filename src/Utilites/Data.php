@@ -193,6 +193,13 @@ class Data extends Base {
 	}
 
 	/**
+	 * @return boolean
+	 */
+	public function validEmail( $sEmail ) {
+		return ( !empty( $sEmail ) && is_email( $sEmail ) );
+	}
+
+	/**
 	 * @param string $sRawList
 	 * @return array
 	 */

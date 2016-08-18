@@ -36,10 +36,6 @@ abstract class Base {
 	 * @var string
 	 */
 	const CollateSeparator = '--SEP--';
-	/**
-	 * @var string
-	 */
-	const PluginVersionKey = 'current_plugin_version';
 
 	/**
 	 * @var boolean
@@ -497,8 +493,7 @@ abstract class Base {
 	 * @return string
 	 */
 	public function getVersion() {
-		$sVersion = $this->getOpt( self::PluginVersionKey );
-		return empty( $sVersion )? $this->getController()->config()->getVersion() : $sVersion;
+		return $this->getController()->config()->getVersion();
 	}
 
 	/**
