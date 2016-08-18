@@ -19,7 +19,7 @@ class Base {
 	/**
 	 * @return \stdClass
 	 */
-	public function getDefinition() {
+	public function getDefinitionForSaving() {
 		return $this->oDefinition;
 	}
 

@@ -1,11 +1,12 @@
 <?php
 
-namespace Fernleaf\Wordpress\Plugin\Module\Configuration;
+namespace Fernleaf\Wordpress\Plugin\Configuration\Module;
 
+use Fernleaf\Wordpress\Plugin\Configuration\Base as ConfigurationBase;
 use Fernleaf\Wordpress\Plugin\Configuration\Definition\Read;
 use Fernleaf\Wordpress\Services;
 
-class Vo {
+class Module extends ConfigurationBase {
 
 	/**
 	 * @var array
@@ -219,37 +220,6 @@ class Vo {
 	 * @throws \Exception
 	 */
 	public function getRawData_FullFeatureConfig( $sTopLevelKey = '' ) {
-		if ( empty( $this->aRawOptionsConfigData ) ) {
-			$this->aRawOptionsConfigData = $this->read();
-		}
-
-		if ( !empty( $sTopLevelKey ) ) {
-			if ( !is_string( $sTopLevelKey ) || !isset( $this->aRawOptionsConfigData[ $sTopLevelKey ] ) ) {
-				throw new \Exception( 'Trying to access configuration Key that is not set' );
-			}
-			return $this->aRawOptionsConfigData[ $sTopLevelKey ];
-		}
-
-		return $this->aRawOptionsConfigData;
-	}
-
-	/**
-	 * @return array
-	 * @throws \Exception
-	 */
-	private function read() {
-
-		$oWp = Services::WpGeneral();
-		$sTransientKey = $this->getSpecTransientStorageKey();
-		$aConfig = $oWp->getTransient( $sTransientKey );
-
-		if ( $this->getRebuildFromFile() || empty( $aConfig ) ) {
-			$aConfig = Read::FromFile( $this->getPathToYamlConfig() );
-			if ( is_null( $aConfig ) ) {
-				throw new \Exception( 'YAML parser could not load to process the options configuration.' );
-			}
-			$oWp->setTransient( $sTransientKey, $aConfig, DAY_IN_SECONDS );
-		}
-		return $aConfig;
+		return empty( $sTopLevelKey ) ? $this->oDefinition->def : $this->get( $sTopLevelKey );
 	}
 }

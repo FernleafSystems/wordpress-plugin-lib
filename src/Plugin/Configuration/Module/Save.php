@@ -1,6 +1,6 @@
 <?php
 
-namespace Fernleaf\Wordpress\Plugin\Configuration\Operations;
+namespace Fernleaf\Wordpress\Plugin\Configuration\Module;
 
 use Fernleaf\Wordpress\Plugin\Configuration\Controller;
 use Fernleaf\Wordpress\Services;
@@ -12,6 +12,6 @@ class Save {
 	 * @return bool
 	 */
 	static public function ToWp( $oConfig, $sOptionKey ) {
-		return Services::WpGeneral()->updateOption( $sOptionKey, $oConfig->getDefinitionForSaving() );
+		return Services::WpGeneral()->setTransient( $sOptionKey, $oConfig->getDefinitionForSaving() );
 	}
 }

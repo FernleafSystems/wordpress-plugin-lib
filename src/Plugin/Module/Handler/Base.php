@@ -6,7 +6,7 @@ use Fernleaf\Wordpress\Plugin\Control\Controller as PluginController;
 use Fernleaf\Wordpress\Plugin\Module\Options\Delete;
 use Fernleaf\Wordpress\Plugin\Module\Options\Save;
 use Fernleaf\Wordpress\Plugin\Module\Options\Vo as OptionsVo;
-use Fernleaf\Wordpress\Plugin\Module\Configuration\Vo as ConfigVo;
+use Fernleaf\Wordpress\Plugin\Configuration\Module\Module as ModuleConfig;
 use Fernleaf\Wordpress\Plugin\Module\Processor\Base as ProcessorBase;
 use Fernleaf\Wordpress\Services;
 
@@ -141,7 +141,7 @@ abstract class Base {
 	protected function verifyModuleMeetRequirements() {
 		$bMeetsReqs = true;
 
-		$aPhpReqs = $this->getConfigVo()->getRequirement( 'php' );
+		$aPhpReqs = $this->getModuleConfig()->getRequirement( 'php' );
 		if ( !empty( $aPhpReqs ) ) {
 
 			if ( !empty( $aPhpReqs['version'] ) ) {
@@ -223,9 +223,9 @@ abstract class Base {
 	}
 
 	/**
-	 * @return ConfigVo
+	 * @return ModuleConfig
 	 */
-	protected function getConfigVo() {
+	protected function getModuleConfig() {
 		return $this->oOptions->getConfig();
 	}
 
@@ -233,7 +233,7 @@ abstract class Base {
 	 * @return array
 	 */
 	public function getAdminNotices(){
-		return $this->getConfigVo()->getAdminNotices();
+		return $this->getModuleConfig()->getAdminNotices();
 	}
 
 	/**
@@ -256,7 +256,7 @@ abstract class Base {
 	 * @return string
 	 */
 	protected function getOptionsStorageKey() {
-		return $this->prefixOptionKey( $this->getConfigVo()->getStorageKey() ).'_options' ;
+		return $this->prefixOptionKey( $this->getModuleConfig()->getStorageKey() ).'_options' ;
 	}
 
 	/**
@@ -324,7 +324,7 @@ abstract class Base {
 		$bEnabled =
 			$this->getOptIs( 'enable_'.$this->getFeatureSlug(), 'Y' )
 			|| $this->getOptIs( 'enable_'.$this->getFeatureSlug(), true, true )
-			|| ( $this->getConfigVo()->getProperty( 'auto_enabled' ) === true );
+			|| ( $this->getModuleConfig()->getProperty( 'auto_enabled' ) === true );
 		return $bEnabled;
 	}
 
@@ -332,14 +332,14 @@ abstract class Base {
 	 * @return string
 	 */
 	protected function getMainFeatureName() {
-		return $this->getConfigVo()->getProperty( 'name' );
+		return $this->getModuleConfig()->getProperty( 'name' );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function getFeatureSlug() {
-		return $this->getConfigVo()->getModuleSlug();
+		return $this->getModuleConfig()->getModuleSlug();
 	}
 
 	/**
@@ -363,7 +363,7 @@ abstract class Base {
 	 * @return array
 	 */
 	public function filter_addPluginSubMenuItem( $aItems ) {
-		$sMenuTitleName = $this->getConfigVo()->getProperty( 'menu_title' );
+		$sMenuTitleName = $this->getModuleConfig()->getProperty( 'menu_title' );
 		if ( is_null( $sMenuTitleName ) ) {
 			$sMenuTitleName = $this->getMainFeatureName();
 		}
@@ -371,7 +371,7 @@ abstract class Base {
 
 			$sHumanName = $this->getController()->getLabels()->getHumanName();
 
-			$bMenuHighlighted = $this->getConfigVo()->getProperty( 'highlight_menu_item' );
+			$bMenuHighlighted = $this->getModuleConfig()->getProperty( 'highlight_menu_item' );
 			if ( $bMenuHighlighted ) {
 				$sMenuTitleName = sprintf( '<span class="icwp_highlighted">%s</span>', $sMenuTitleName );
 			}
@@ -419,7 +419,7 @@ abstract class Base {
 			return $aSummaryData;
 		}
 
-		$sMenuTitle = $this->getConfigVo()->getProperty( 'menu_title' );
+		$sMenuTitle = $this->getModuleConfig()->getProperty( 'menu_title' );
 		$aSummaryData[] = array(
 			'enabled' => $this->getIsMainFeatureEnabled(),
 			'active' => self::$sActivelyDisplayedModuleOptions == $this->getFeatureSlug(),
@@ -454,7 +454,7 @@ abstract class Base {
 	 * @return boolean
 	 */
 	public function getIfShowFeatureMenuItem() {
-		return $this->getConfigVo()->getProperty( 'show_feature_menu_item' );
+		return $this->getModuleConfig()->getProperty( 'show_feature_menu_item' );
 	}
 
 	/**
@@ -462,7 +462,7 @@ abstract class Base {
 	 * @return mixed|null
 	 */
 	public function getDefinition( $sDefinitionKey ) {
-		return $this->getConfigVo()->getDefinition( $sDefinitionKey );
+		return $this->getModuleConfig()->getDefinition( $sDefinitionKey );
 	}
 
 	/**
@@ -925,7 +925,7 @@ abstract class Base {
 			'sPluginName'		=> $oCon->getLabels()->getHumanName(),
 			'sFeatureName'		=> $this->getMainFeatureName(),
 			'bFeatureEnabled'	=> $this->getIsMainFeatureEnabled(),
-			'sTagline'			=> $this->getConfigVo()->getTagline(),
+			'sTagline'			=> $this->getModuleConfig()->getTagline(),
 			'fShowAds'			=> $this->getIsShowMarketing(),
 			'nonce_field'		=> wp_nonce_field( $oCon->getPluginPrefix() ),
 			'sFeatureSlug'		=> $this->doPluginPrefix( $this->getFeatureSlug() ),
@@ -1117,13 +1117,13 @@ abstract class Base {
 	 */
 	public function collectOptionsForTracking() {
 		$oVO = $this->getOptionsVo();
-		$oConfigVo = $this->getConfigVo();
+		$oModuleConfig = $this->getModuleConfig();
 		$aOptionsData = $this->getOptionsVo()->getOptionsMaskSensitive();
 		foreach ( $aOptionsData as $sOption => $mValue ) {
 			unset( $aOptionsData[ $sOption ] );
 			// some cleaning to ensure we don't have disallowed characters
 			$sOption = preg_replace( '#[^_a-z]#', '', strtolower( $sOption ) );
-			$sType = $oConfigVo->getOptionType( $sOption );
+			$sType = $oModuleConfig->getOptionType( $sOption );
 			if ( $sType == 'checkbox' ) { // only want a boolean 1 or 0
 				$aOptionsData[ $sOption ] = (int)( $mValue == 'Y' );
 			}

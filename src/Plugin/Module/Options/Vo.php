@@ -1,7 +1,7 @@
 <?php
 namespace Fernleaf\Wordpress\Plugin\Module\Options;
 
-use Fernleaf\Wordpress\Plugin\Module\Configuration\Vo as ConfigVo;
+use Fernleaf\Wordpress\Plugin\Configuration\Module\Module as ModuleConfig;
 
 class Vo {
 
@@ -21,19 +21,19 @@ class Vo {
 	protected $bNeedSave;
 
 	/**
-	 * @var ConfigVo
+	 * @var ModuleConfig
 	 */
 	protected $oConfig;
 
 	/**
-	 * @param ConfigVo $oConfig
+	 * @param ModuleConfig $oConfig
 	 */
 	public function __construct( $oConfig ) {
 		$this->oConfig = $oConfig;
 	}
 
 	/**
-	 * @return ConfigVo
+	 * @return ModuleConfig
 	 */
 	public function getConfig() {
 		return $this->oConfig;

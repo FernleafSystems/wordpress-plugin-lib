@@ -3,6 +3,8 @@
 namespace Fernleaf\Wordpress\Plugin\Control;
 
 use Fernleaf\Wordpress\Plugin\Admin\Menu;
+use Fernleaf\Wordpress\Plugin\Configuration\Definition\Build as DefinitionBuild;
+use Fernleaf\Wordpress\Plugin\Configuration\Module\Build as ModuleBuild;
 use Fernleaf\Wordpress\Plugin\Configuration\Operations\Build;
 use Fernleaf\Wordpress\Plugin\Configuration\Operations\Save;
 use Fernleaf\Wordpress\Plugin\Configuration\Operations\Verify;
@@ -14,7 +16,7 @@ use Fernleaf\Wordpress\Plugin\Display\RowMeta;
 use Fernleaf\Wordpress\Plugin\Display\UpdateMessage;
 use Fernleaf\Wordpress\Plugin\Locale\TextDomain;
 use Fernleaf\Wordpress\Plugin\Module\Options\Vo as OptionsVo;
-use Fernleaf\Wordpress\Plugin\Module\Configuration\Vo as ConfigVo;
+use Fernleaf\Wordpress\Plugin\Configuration\Module\Module as ModuleConfig;
 use Fernleaf\Wordpress\Plugin\Permission\Permissions;
 use Fernleaf\Wordpress\Plugin\Request\Handlers\Forms;
 use Fernleaf\Wordpress\Plugin\Root\File as RootFile;
@@ -294,9 +296,13 @@ class Controller {
 			$sFeatureName
 		);
 
-		// NEW: We inject the optionsVO into the constructor instead of relying on the Handler to create the optionsVo.
+		// This all needs organised much better
 		$sPathToYamlConfig = $this->getPluginPaths()->getPath_Config( $sFeatureSlug );
-		$oOptionsVo = new OptionsVo( new ConfigVo( $sPathToYamlConfig ) );
+		$sStorageKey = 'icwp_'.md5( $sPathToYamlConfig );
+		$oModuleConfig = ModuleBuild::FromFile( $sStorageKey, $sPathToYamlConfig );
+		\Fernleaf\Wordpress\Plugin\Configuration\Module\Save::ToWp( $oModuleConfig, $sStorageKey );
+
+		$oOptionsVo = new OptionsVo( $oModuleConfig );
 		if ( $bRecreate || !isset( $this->{$sOptionsVarName} ) ) {
 			$this->{$sOptionsVarName} = new $sClassName(
 				$this,
