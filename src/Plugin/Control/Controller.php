@@ -15,6 +15,7 @@ use Fernleaf\Wordpress\Plugin\Display\UpdateMessage;
 use Fernleaf\Wordpress\Plugin\Locale\TextDomain;
 use Fernleaf\Wordpress\Plugin\Module\Options\Vo as OptionsVo;
 use Fernleaf\Wordpress\Plugin\Module\Configuration\Vo as ConfigVo;
+use Fernleaf\Wordpress\Plugin\Permission\Permissions;
 use Fernleaf\Wordpress\Plugin\Request\Handlers\Forms;
 use Fernleaf\Wordpress\Plugin\Root\File as RootFile;
 use Fernleaf\Wordpress\Plugin\Root\Paths as RootPaths;
@@ -45,6 +46,11 @@ class Controller {
 	 * @var RootPaths
 	 */
 	protected $oRootPaths;
+
+	/**
+	 * @var Permissions
+	 */
+	protected $oPermissions;
 
 	/**
 	 * @var Prefix
@@ -101,6 +107,7 @@ class Controller {
 	/**
 	 */
 	public function onWpPluginsLoaded() {
+		$this->getPermissions();
 		$oTd = new TextDomain( $this->config() );
 		$oTd->loadTextDomain( $this->getPluginPaths() );
 		$this->doRegisterHooks();
@@ -338,6 +345,15 @@ class Controller {
 		return $this->oAdminMenu;
 	}
 
+	/**
+	 * @return Permissions
+	 */
+	public function getPermissions() {
+		if ( !isset( $this->oPermissions ) ) {
+			$this->oPermissions = new Permissions( $this->config(), $this->getPluginPrefix() );
+		}
+		return $this->oPermissions;
+	}
 
 	/**
 	 * @return PluginPaths

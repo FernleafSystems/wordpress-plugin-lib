@@ -135,10 +135,11 @@ class Derived {
 	}
 
 	/**
+	 * @param string $sFile
 	 * @return string
 	 */
-	public function getPath_Templates() {
-		return $this->getAbsolutePath( $this->getPluginPath( 'templates' ) );
+	public function getPath_Templates( $sFile = '' ) {
+		return $this->getAbsolutePath( $this->getPluginPath( 'templates', $sFile ) );
 	}
 
 	/**

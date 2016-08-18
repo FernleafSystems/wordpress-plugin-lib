@@ -101,10 +101,10 @@ class Render {
 	/**
 	 * @deprecated
 	 * @return string
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	private function renderTwig() {
-		throw new Exception( 'Twig codebase has been removed since version 5.3.3. Render using PHP instead.' );
+		throw new \Exception( 'Twig codebase has been removed since version 5.3.3. Render using PHP instead.' );
 		$oTwig = $this->getTwigEnvironment();
 		return $oTwig->render( $this->getTemplate(), $this->getRenderVars() );
 	}

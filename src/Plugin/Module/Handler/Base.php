@@ -237,14 +237,6 @@ abstract class Base {
 	}
 
 	/**
-	 * @return bool
-	 */
-	public function getIsUpgrading() {
-//			return $this->getVersion() != $this->getController()->getVersion();
-		return $this->getController()->getIsRebuildOptionsFromFile();
-	}
-
-	/**
 	 * Hooked to the plugin's main plugin_shutdown action
 	 */
 	public function action_doFeatureShutdown() {
@@ -377,7 +369,7 @@ abstract class Base {
 		}
 		if ( $this->getIfShowFeatureMenuItem() && !empty( $sMenuTitleName ) ) {
 
-			$sHumanName = $this->getController()->getHumanName();
+			$sHumanName = $this->getController()->getLabels()->getHumanName();
 
 			$bMenuHighlighted = $this->getConfigVo()->getProperty( 'highlight_menu_item' );
 			if ( $bMenuHighlighted ) {
@@ -602,7 +594,6 @@ abstract class Base {
 	 */
 	public function savePluginOptions() {
 		$this->doPrePluginOptionsSave();
-		$this->updateOptionsVersion();
 
 		add_filter( $this->doPluginPrefix( 'bypass_permission_to_manage' ), array( $this, 'getBypassAdminRestriction' ), 1000 );
 		$oSaver = new Save();
@@ -727,17 +718,10 @@ abstract class Base {
 	 */
 	protected function doPrePluginOptionsSave() { }
 
-	protected function updateOptionsVersion() {
-		if ( $this->getIsUpgrading() || $this->getController()->getIsRebuildOptionsFromFile() ) {
-			$this->setOpt( self::PluginVersionKey, $this->getController()->getVersion() );
-			$this->getConfigVo()->cleanTransientStorage();
-		}
-	}
-
 	/**
 	 */
 	public function deletePluginOptions() {
-		if ( $this->getController()->getHasPermissionToManage() ) {
+		if ( $this->getController()->getPermissions()->getHasPermissionToManage() ) {
 			$oDeleter = new Delete();
 			$oDeleter->execute( $this->getOptionsVo(), $this->getOptionsStorageKey() );
 			$this->bPluginDeleting = true;
@@ -779,13 +763,12 @@ abstract class Base {
 	}
 
 	protected function verifyFormSubmit() {
-		if ( !$this->getController()->getHasPermissionToManage() ) {
-//				TODO: manage how we react to prohibited submissions
-			return false;
+		// should be moved to Forms
+		if ( $this->getController()->getPermissions()->getHasPermissionToManage() ) {
+			return check_admin_referer( $this->getController()->getPluginPrefix() );
 		}
-
-		// Now verify this is really a valid submission.
-		return check_admin_referer( $this->getController()->getPluginPrefix() );
+//				TODO: manage how we react to prohibited submissions
+		return false;
 	}
 
 	/**
@@ -817,7 +800,7 @@ abstract class Base {
 	 */
 	public function updatePluginOptionsFromSubmit( $sAllOptionsInput ) {
 		if ( empty( $sAllOptionsInput ) ) {
-			return true;
+			return;
 		}
 		$oDp = Services::Data();
 		$oReq = Services::Request();
@@ -939,7 +922,7 @@ abstract class Base {
 		self::$sActivelyDisplayedModuleOptions = $this->getFeatureSlug();
 		return array(
 			'var_prefix'		=> $oCon->getPluginPrefix()->getOptionStoragePrefix(),
-			'sPluginName'		=> $oCon->config()->getHumanName(),
+			'sPluginName'		=> $oCon->getLabels()->getHumanName(),
 			'sFeatureName'		=> $this->getMainFeatureName(),
 			'bFeatureEnabled'	=> $this->getIsMainFeatureEnabled(),
 			'sTagline'			=> $this->getConfigVo()->getTagline(),
@@ -948,7 +931,7 @@ abstract class Base {
 			'sFeatureSlug'		=> $this->doPluginPrefix( $this->getFeatureSlug() ),
 			'form_action'		=> 'admin.php?page='.$this->doPluginPrefix( $this->getFeatureSlug() ),
 			'nOptionsPerRow'	=> 1,
-			'aPluginLabels'		=> $oCon->getPluginLabels(),
+			'aPluginLabels'		=> $oCon->getLabels()->all(),
 
 			'bShowStateSummary'	=> false,
 			'aSummaryData'		=> apply_filters( $this->doPluginPrefix( 'get_feature_summary_data' ), array() ),
@@ -987,7 +970,7 @@ abstract class Base {
 
 		// Get Base Data
 		$aData = apply_filters( $this->doPluginPrefix( $this->getFeatureSlug().'display_data' ), array_merge( $this->getBaseDisplayData(), $aData ) );
-		$bPermissionToView = $this->getController()->getHasPermissionToView();
+		$bPermissionToView = $this->getController()->getPermissions()->getHasPermissionToView();
 
 		if ( !$bPermissionToView ) {
 			$sSubView = 'subfeature-access_restricted';
@@ -1016,11 +999,11 @@ abstract class Base {
 	 * @return bool
 	 */
 	protected function displayByTemplate( $aData = array(), $sSubView = '' ) {
-
 		$oCon = $this->getController();
+
 		// Get Base Data
 		$aData = apply_filters( $this->doPluginPrefix( $this->getFeatureSlug().'display_data' ), array_merge( $this->getBaseDisplayData(), $aData ) );
-		$bPermissionToView = $oCon->getHasPermissionToView();
+		$bPermissionToView = $oCon->getPermissions()->getHasPermissionToView();
 
 		if ( !$bPermissionToView ) {
 			$sSubView = 'subfeature-access_restricted';
@@ -1029,7 +1012,7 @@ abstract class Base {
 		if ( empty( $sSubView ) ) {
 			$oWpFs = Services::WpFs();
 			$sFeatureInclude = 'feature-'.$this->getFeatureSlug();
-			if ( $oWpFs->exists( $oCon->getPath_TemplatesFile( $sFeatureInclude ) ) ) {
+			if ( $oWpFs->exists( $oCon->getPluginPaths()->getPath_Templates( $sFeatureInclude ) ) ) {
 				$sSubView = $sFeatureInclude;
 			}
 			else {
@@ -1053,11 +1036,11 @@ abstract class Base {
 	/**
 	 * @param array $aData
 	 * @return string
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function renderAdminNotice( $aData ) {
 		if ( empty( $aData['notice_attributes'] ) ) {
-			throw new Exception( 'notice_attributes is empty' );
+			throw new \Exception( 'notice_attributes is empty' );
 		}
 
 		if ( !isset( $aData['icwp_ajax_nonce'] ) ) {
@@ -1090,17 +1073,16 @@ abstract class Base {
 		if ( empty( $aData['unique_render_id'] ) ) {
 			$aData[ 'unique_render_id' ] = substr( md5( mt_rand() ), 0, 5 );
 		}
+		$oCon = $this->getController();
 		try {
-			$sOutput = $this
-				->loadRenderer( $this->getController()->getPath_Templates() )
+			$sOutput = Services::Render( $oCon->getPluginPaths()->getPath_Templates() )
 				->setTemplate( $sTemplate )
 				->setRenderVars( $aData )
 				->render();
 		}
-		catch( Exception $oE ) {
+		catch( \Exception $oE ) {
 			$sOutput = $oE->getMessage();
 		}
-
 		return $sOutput;
 	}
 
@@ -1135,12 +1117,13 @@ abstract class Base {
 	 */
 	public function collectOptionsForTracking() {
 		$oVO = $this->getOptionsVo();
+		$oConfigVo = $this->getConfigVo();
 		$aOptionsData = $this->getOptionsVo()->getOptionsMaskSensitive();
 		foreach ( $aOptionsData as $sOption => $mValue ) {
 			unset( $aOptionsData[ $sOption ] );
 			// some cleaning to ensure we don't have disallowed characters
 			$sOption = preg_replace( '#[^_a-z]#', '', strtolower( $sOption ) );
-			$sType = $oVO->getOptionType( $sOption );
+			$sType = $oConfigVo->getOptionType( $sOption );
 			if ( $sType == 'checkbox' ) { // only want a boolean 1 or 0
 				$aOptionsData[ $sOption ] = (int)( $mValue == 'Y' );
 			}

@@ -24,12 +24,11 @@ class Forms {
 	 * @return bool
 	 */
 	protected function handleFormSubmit() {
-		if ( !$this->getIsPluginFormSubmit() ) {
-			return false;
+		if ( $this->getIsPluginFormSubmit() ) {
+			do_action( $this->oPrefix->doPluginPrefix( 'form_submit' ) );
+			$oWp = Services::WpGeneral();
+			$oWp->doRedirect( $oWp->getUrl_CurrentAdminPage() );
 		}
-		do_action( $this->oPrefix->doPluginPrefix( 'form_submit' ) );
-		$oWp = Services::WpGeneral();
-		$oWp->doRedirect( $oWp->getUrl_CurrentAdminPage() );
 	}
 
 	/**
